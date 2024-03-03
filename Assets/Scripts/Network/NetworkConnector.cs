@@ -53,6 +53,8 @@ namespace Network
 
                 _communicator.Init(_connectFd);
                 _communicator.ReceiveAsync();
+            
+                OnConnected?.Invoke(_communicator);
             }
             catch (Exception e)
             {

@@ -11,24 +11,22 @@ public class GameEntry : MonoBehaviour
     
     private NetworkAgent _networkAgent;
 
-    private byte[] _loginData;
-
     private async void Awake()
     {
         _networkAgent = new NetworkAgent();
-        
-        await _networkAgent.Connect("127.0.0.1", 10001);
-
-        ByteBuffer byteBuffer = ByteBufferPool.Shared.Rent(10);
-        byteBuffer.WriteUInt16(123);
-        _loginData = new byte[byteBuffer.Length];
-        byteBuffer.Read(_loginData, 0, byteBuffer.Length);
         
         _networkAgent.RegisterMessageHandler((ushort)MessageId.Login, (communicator, info) =>
         {
             var response = info.Message.ReadUInt16();
             Log.Info($"{response.ToString()}");
         });
+        _networkAgent.RegisterMessageHandler((ushort)MessageId.Register, (communicator, info) =>
+        {
+            var response = info.Message.ReadUInt16();
+            Log.Info($"{response.ToString()}");
+        });
+        
+        await _networkAgent.Connect("127.0.0.1", 10001);
     }
 
     private void Update()

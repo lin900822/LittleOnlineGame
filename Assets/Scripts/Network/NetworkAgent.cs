@@ -35,6 +35,9 @@ namespace Network
     /// </summary>
     public class NetworkAgent
     {
+        public Action OnConnected;
+        public Action OnDisconnected;
+
         private static readonly long REQUEST_TIME_OUT_MILLISECONDS       = 10 * 1000;
         private static readonly long CHECK_REQUEST_TIME_OUT_MILLISECONDS = 1 * 1000;
 
@@ -143,13 +146,14 @@ namespace Network
             _lastCheckReconnectTime = TimeUtils.GetTimeStamp();
 
             _connector                   =  new NetworkConnector();
-            _connector.OnReceivedMessage += OnReceivedMessage;
-            _connector.OnClosed          += OnClosed;
-        
+            _connector.OnReceivedMessage += HandleReceivedMessage;
+            _connector.OnConnected       += HandleConnected;
+            _connector.OnClosed          += HandleClosed;
+
             await _connector.Connect(ip, port);
         }
-    
-        private void OnReceivedMessage(NetworkCommunicator communicator, ReceivedMessageInfo receivedMessageInfo)
+
+        private void HandleReceivedMessage(NetworkCommunicator communicator, ReceivedMessageInfo receivedMessageInfo)
         {
             if (receivedMessageInfo.IsRequest)
             {
@@ -167,19 +171,27 @@ namespace Network
                 _messageRouter.ReceiveMessage(communicator, receivedMessageInfo);
             }
         }
-    
-        private void OnClosed(Socket socket)
+
+        private void HandleConnected(NetworkCommunicator communicator)
         {
+            OnConnected?.Invoke();
+        }
+
+        private void HandleClosed(Socket socket)
+        {
+            OnDisconnected?.Invoke();
+
             _requestPacks.Clear();
             _responseQueue.Clear();
             _timeOutRequests.Clear();
-        
-            _connector.OnReceivedMessage -= OnReceivedMessage;
-            _connector.OnClosed          -= OnClosed;
-        
+
+            _connector.OnReceivedMessage -= HandleReceivedMessage;
+            _connector.OnConnected       -= HandleConnected;
+            _connector.OnClosed          -= HandleClosed;
+
             _lastCheckReconnectTime = TimeUtils.GetTimeStamp();
         }
-    
+
         private bool TryGetRequestInfo(uint requestId, out RequestInfo outRequestInfo)
         {
             var enumerator = _requestPacks.GetEnumerator();
@@ -197,7 +209,7 @@ namespace Network
         }
 
         #region - Public Methods -
-    
+
         public void RegisterMessageHandler(ushort messageId, Action<NetworkCommunicator, ReceivedMessageInfo> handler)
         {
             _messageRouter.RegisterMessageHandler(messageId, handler);
@@ -213,13 +225,13 @@ namespace Network
             if (_connector.ConnectState != ConnectState.Connected) return;
             _connector.Send(messageId, message);
         }
-    
+
         public void SendMessage(ushort messageId, ByteBuffer message)
         {
             if (_connector.ConnectState != ConnectState.Connected) return;
             _connector.Send(messageId, message);
         }
-    
+
         public Task<ReceivedMessageInfo> SendRequest(ushort messageId, byte[] request, Action onTimeOut = null)
         {
             var taskCompletionSource =
@@ -247,7 +259,7 @@ namespace Network
 
             return taskCompletionSource.Task;
         }
-    
+
         public Task<ReceivedMessageInfo> SendRequest(ushort messageId, ByteBuffer request, Action onTimeOut = null)
         {
             var taskCompletionSource =
@@ -285,7 +297,7 @@ namespace Network
 
             _connector.Send(messageId, request, true, _requestSerialId);
         }
-    
+
         public void SendRequest(ushort messageId, ByteBuffer request, Action<ReceivedMessageInfo> onCompleted,
             Action                     onTimeOut = null)
         {
@@ -315,7 +327,7 @@ namespace Network
                 _requestPacks.AddLast(requestPack);
             }
         }
-    
+
         #endregion
     }
 }

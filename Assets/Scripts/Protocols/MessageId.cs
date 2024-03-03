@@ -4,11 +4,19 @@ namespace Protocols
     {
         HeartBeat = 0,
     
-        Hello     = 101,
-        Move      = 102,
-        Register  = 103,
-        RawByte   = 104,
-        Broadcast = 105,
-        Login     = 106,
+        // 測試
+        Hello     = 10,
+        Move      = 11,
+        RawByte   = 12,
+        Broadcast = 13,
+    
+        // 對Client
+        Register = 101,
+        Login    = 102,
+    
+        ClientMax = 32767,
+    
+        // Server內部
+        ServerInfo = 32768,
     }
 }
