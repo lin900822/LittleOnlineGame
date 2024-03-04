@@ -1,57 +1,23 @@
-using Common;
-using Core.Network;
-using Network;
-using Protocols;
+using System;
+using Framework.UI;
 using UnityEngine;
 
-public class GameEntry : MonoBehaviour
+namespace Game
 {
-    [SerializeField] private string _username;
-    [SerializeField] private string _password;
-    
-    private NetworkAgent _networkAgent;
-
-    private async void Awake()
+    public class GameEntry : MonoBehaviour
     {
-        _networkAgent = new NetworkAgent();
-        
-        _networkAgent.RegisterMessageHandler((ushort)MessageId.Login, (communicator, info) =>
-        {
-            var response = info.Message.ReadUInt16();
-            Log.Info($"{response.ToString()}");
-        });
-        _networkAgent.RegisterMessageHandler((ushort)MessageId.Register, (communicator, info) =>
-        {
-            var response = info.Message.ReadUInt16();
-            Log.Info($"{response.ToString()}");
-        });
-        
-        await _networkAgent.Connect("127.0.0.1", 10001);
-    }
+        [SerializeField]
+        private UISettings _uiSettings;
 
-    private void Update()
-    {
-        _networkAgent.Update();
-        
-        if (Input.GetKeyDown(KeyCode.A))
+        private void Awake()
         {
-            var user = new User()
-            {
-                Username = _username,
-                Password = _password
-            };
-            var userData = ProtoUtils.Encode(user);
-            _networkAgent.SendMessage((ushort)MessageId.Login, userData);
+            GameApp.Instance.InjectSettings(_uiSettings);
+            GameApp.Instance.Init();
         }
-        else if(Input.GetKeyDown(KeyCode.B))
+
+        private void Update()
         {
-            var user = new User()
-            {
-                Username = _username,
-                Password = _password
-            };
-            var userData = ProtoUtils.Encode(user);
-            _networkAgent.SendMessage((ushort)MessageId.Register, userData);
+            GameApp.Instance.Update();
         }
     }
 }
