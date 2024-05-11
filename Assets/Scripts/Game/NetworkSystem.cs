@@ -14,7 +14,7 @@ namespace Game
         {
             _networkAgent = new NetworkAgent();
 
-            _networkAgent.Connect("127.0.0.1", 10001).Await(RegisterMessageRoute);
+            _networkAgent.Connect("127.0.0.1", 11001).Await(RegisterMessageRoute);
         }
 
         public void Update()
