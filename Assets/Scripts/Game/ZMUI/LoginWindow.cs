@@ -1,46 +1,74 @@
-﻿using Framework.ZMUI;
-using UnityEngine;
+/*---------------------------------
+ - Title: UI腳本生成工具
+ - Date: 2024/5/12 上午 02:33:40
+ - 注意事項:
+ - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
+ - 2. 請不要在 "// Start UI Components Fields" 和 "// End UI Components Fields" 之間加入新的程式碼
+ - 3. 請不要在 "// Start Start InitUIComponent" 和 "// End Start InitUIComponent" 之間加入新的程式碼
+---------------------------------*/
+
 using UnityEngine.UI;
+using UnityEngine;
+using Framework.ZMUI;
 
 namespace Game.ZMUI
 {
     public class LoginWindow : WindowBase
     {
+        #region - UI Components Fields -
+
+        // Start UI Components Fields
         private Button CloseButton;
-        
-        #region 声明周期函数
-        //调用机制与Mono Awake一致
+        // End UI Components Fields
+
+        #endregion
+
+        #region - Life Cycle -
+
         public override void OnLoaded()
         {
             base.OnLoaded();
-            
-            CloseButton = transform.Find("Content/Background/[Button]Close").GetComponent<Button>();
-            AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            InitUIComponent();
         }
-        //物体显示时执行
+
+        private void InitUIComponent()
+        {
+            // Start InitUIComponent
+            CloseButton = UIComponentContainer[0].GetComponent<Button>();
+            AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            // End InitUIComponent
+        }
+
         public override void OnShow()
         {
             base.OnShow();
         }
-        //物体隐藏时执行
+
         public override void OnHide()
         {
             base.OnHide();
         }
-        //物体销毁时执行
+
         public override void OnUnloaded()
         {
             base.OnUnloaded();
         }
-        #endregion
-        #region API Function
 
         #endregion
-        #region UI组件事件
-        public void OnCloseButtonClick()
+
+        #region - UI Component Events -
+
+        // Start UI Component Events
+        private void OnCloseButtonClick()
         {
             HideWindow();
         }
+        // End UI Component Events
+
+        #endregion
+
+        #region - Custom Logic -
+
         #endregion
     }
 }

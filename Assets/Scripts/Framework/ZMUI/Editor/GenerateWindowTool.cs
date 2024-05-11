@@ -7,31 +7,28 @@ using UnityEngine;
 
 namespace Framework.ZMUI.Editor
 {
-    public class EditorObjectData
+    public class UIComponentInfo
     {
-        public int    InstanceId;
-        public string FieldName;
-        public string FieldType;
+        public string Name;
+        public string Type;
     }
 
     public class GenerateWindowTool : UnityEditor.Editor
     {
-        public static Dictionary<int, string>
-            objFindPathDic = new Dictionary<int, string>(); //key 物体的insid，value 代表物体的查找路径
+        private static List<UIComponentInfo> _uiComponentInfos = new List<UIComponentInfo>();
 
-        public static List<EditorObjectData> objDataList = new List<EditorObjectData>(); //查找对象的数据
+        private static List<GameObject> _uiComponents;
 
-        static Dictionary<string, string> methodDic = new Dictionary<string, string>();
+        private static Dictionary<string, string> _methodCodeByMethodName = new Dictionary<string, string>();
 
-        [MenuItem("/GameObject/[UI腳本生成工具]/生成Window腳本(Shift+V) #V", false, 0)]
-        static void CreateFindComponentScripts()
+        [MenuItem("/GameObject/UI腳本生成工具/生成Window腳本(Shift+V) #V", false, 0)]
+        private static void CreateFindComponentScripts()
         {
-            objFindPathDic.Clear();
-            objDataList.Clear();
-            methodDic.Clear();
+            _uiComponentInfos.Clear();
+            _methodCodeByMethodName.Clear();
 
-            GameObject obj = Selection.objects.First() as GameObject; //获取到当前选择的物体
-            if (obj == null)
+            var selectedGO = Selection.objects.First() as GameObject; //获取到当前选择的物体
+            if (selectedGO == null)
             {
                 Debug.LogError("請選擇 GameObject");
                 return;
@@ -42,31 +39,51 @@ namespace Framework.ZMUI.Editor
                 Directory.CreateDirectory(GeneratorConfig.WindowGeneratePath);
             }
 
-            PresWindowNodeData(obj.transform, obj.name);
+            var container = selectedGO.GetComponent<UIComponentContainer>();
+            if (container == null)
+            {
+                Debug.LogError("此物件沒有 UIComponentContainer");
+                return;
+            }
+            
+            _uiComponents = container.UIComponents;
+            
+            foreach (var item in _uiComponents)
+            {
+                var uiComponentName = item.name;
+                if (uiComponentName.Contains("[") && uiComponentName.Contains("]"))
+                {
+                    var index     = uiComponentName.IndexOf("]") + 1;
+                    var fieldName = uiComponentName.Substring(index, uiComponentName.Length - index);
+                    var fieldType = uiComponentName.Substring(1, index - 2);
+                    
+                    _uiComponentInfos.Add(new UIComponentInfo()
+                    {
+                        Name = fieldName,
+                        Type = fieldType,
+                    });
+                }
+            }
 
-            //生成CS脚本
-            string codeContent = GenCodeContent(obj.name);
-            Debug.Log(codeContent);
-            string codePath    = GeneratorConfig.WindowGeneratePath + "/" + obj.name + ".cs";
-            CodePreviewWindow.ShowCodePreviewWindow(codeContent, codePath, methodDic);
+            var codeContent = GenCodeContent(selectedGO.name);
+            var codePath    = GeneratorConfig.WindowGeneratePath + "/" + selectedGO.name + ".cs";
+            CodePreviewWindow.ShowCodePreviewWindow(codeContent, codePath, _methodCodeByMethodName);
+
+            _uiComponents = null;
         }
-
-        /// <summary>
-        /// 生成Window脚本
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        public static string GenCodeContent(string name)
+        
+        private static string GenCodeContent(string name)
         {
-            methodDic.Clear();
-            StringBuilder sb = new StringBuilder();
+            _methodCodeByMethodName.Clear();
+            var sb = new StringBuilder();
 
-            //添加引用
             sb.AppendLine("/*---------------------------------");
             sb.AppendLine(" - Title: UI腳本生成工具");
             sb.AppendLine(" - Date: " + System.DateTime.Now);
-            sb.AppendLine(" - Description:UI 表现层，该层只负责界面的交互、表现相关的更新，不允许编写任何业务逻辑代码");
-            sb.AppendLine(" - 注意:以下文件是自动生成的，再次生成不会覆盖原有的代码，会在原有的代码上进行新增，可放心使用");
+            sb.AppendLine(" - 注意事項:");
+            sb.AppendLine(" - 1. 請不要刪除或修改 \"// Start XXX\" 和 \"// End XXX\" 等相關的註解, 自動生成器會依賴他們");
+            sb.AppendLine(" - 2. 請不要在 \"// Start UI Components Fields\" 和 \"// End UI Components Fields\" 之間加入新的程式碼");
+            sb.AppendLine(" - 3. 請不要在 \"// Start Start InitUIComponent\" 和 \"// End Start InitUIComponent\" 之間加入新的程式碼");
             sb.AppendLine("---------------------------------*/");
             sb.AppendLine("using UnityEngine.UI;");
             sb.AppendLine("using UnityEngine;");
@@ -75,19 +92,19 @@ namespace Framework.ZMUI.Editor
 
             sb.AppendLine($"namespace Game.ZMUI");
             sb.AppendLine("{");
-            //生成类命
+            
             sb.AppendLine($"\tpublic class {name} : WindowBase");
             sb.AppendLine("\t{");
-            sb.AppendLine("\t");
 
             // UI Components Fields
             sb.AppendLine($"\t\t #region - UI Components Fields -");
             sb.AppendLine($"");
-            foreach (var item in objDataList)
+            sb.AppendLine($"\t\t // Start UI Components Fields");
+            foreach (var item in _uiComponentInfos)
             {
-                sb.AppendLine($"\t\t private {item.FieldType} {item.FieldName}{item.FieldType};");
+                sb.AppendLine($"\t\t private {item.Type} {item.Name}{item.Type};");
             }
-
+            sb.AppendLine($"\t\t // End UI Components Fields");
             sb.AppendLine($"\t");
             sb.AppendLine($"\t\t #endregion");
 
@@ -99,35 +116,42 @@ namespace Framework.ZMUI.Editor
             sb.AppendLine("\t\t public override void OnLoaded()");
             sb.AppendLine("\t\t {");
             sb.AppendLine("\t\t\t base.OnLoaded();");
-            foreach (var item in objFindPathDic)
-            {
-                EditorObjectData itemData  = GetEditorObjectData(item.Key);
-                string           fieldName = itemData.FieldName + itemData.FieldType;
+            sb.AppendLine("\t\t\t InitUIComponent();");
+            sb.AppendLine("\t\t }");
+            sb.AppendLine("\t");
 
-                if (string.Equals("GameObject", itemData.FieldType))
+            // InitUIComponent
+            sb.AppendLine("\t\t private void InitUIComponent()");
+            sb.AppendLine("\t\t {");
+            sb.AppendLine("\t\t\t // Start InitUIComponent");
+            for (var i = 0; i < _uiComponentInfos.Count; i++)
+            {
+                var node     = _uiComponentInfos[i];
+                var fullName = node.Name + node.Type;
+
+                if (string.Equals("GameObject", node.Type))
                 {
-                    sb.AppendLine($"\t\t\t {fieldName} = transform.Find(\"{item.Value}\").gameObject;");
+                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].gameObject;");
                 }
-                else if (string.Equals("Transform", itemData.FieldType))
+                else if (string.Equals("Transform", node.Type))
                 {
-                    sb.AppendLine($"\t\t\t {fieldName} = transform.Find(\"{item.Value}\").transform;");
+                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].transform;");
                 }
                 else
                 {
-                    sb.AppendLine($"\t\t\t {fieldName} = transform.Find(\"{item.Value}\").GetComponent<{itemData.FieldType}>();");
+                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].GetComponent<{node.Type}>();");
                 }
             }
-            
-            foreach (var item in objDataList)
+
+            foreach (var node in _uiComponentInfos)
             {
-                string type       = item.FieldType;
-                string methodName = item.FieldName;
-                string suffix     = "";
+                var type       = node.Type;
+                var methodName = node.Name;
+                var suffix     = "";
                 if (type.Contains("Button"))
                 {
                     suffix = "Click";
-                    sb.AppendLine(
-                        $"\t\t\t AddButtonClickListener({methodName}{type}, On{methodName}Button{suffix});");
+                    sb.AppendLine($"\t\t\t AddButtonClickListener({methodName}{type}, On{methodName}Button{suffix});");
                 }
 
                 if (type.Contains("InputField"))
@@ -143,17 +167,17 @@ namespace Framework.ZMUI.Editor
                         $"\t\t\t target.AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
                 }
             }
-            
+            sb.AppendLine("\t\t\t // End InitUIComponent");
             sb.AppendLine("\t\t }");
             sb.AppendLine("\t");
-            
+
             // OnShow
             sb.AppendLine("\t\t public override void OnShow()");
             sb.AppendLine("\t\t {");
             sb.AppendLine("\t\t\t base.OnShow();");
             sb.AppendLine("\t\t }");
             sb.AppendLine("\t");
-            
+
             // OnHide
             sb.AppendLine("\t\t public override void OnHide()");
             sb.AppendLine("\t\t {");
@@ -169,42 +193,46 @@ namespace Framework.ZMUI.Editor
             sb.AppendLine("\t");
 
             sb.AppendLine($"\t\t #endregion");
-
-            // API Function 
-            sb.AppendLine($"\t");
-            sb.AppendLine($"\t\t #region API Function");
-            sb.AppendLine($"\n");
-            sb.AppendLine($"\t\t    ");
-            sb.AppendLine($"\t\t #endregion");
             sb.AppendLine($"\t");
 
             // UI Component Events 
             sb.AppendLine($"\t\t #region - UI Component Events -");
-            sb.AppendLine($"\t");
-            foreach (var item in objDataList)
+            sb.AppendLine($"");
+            sb.AppendLine($"\t\t // Start UI Component Events");
+            foreach (var item in _uiComponentInfos)
             {
-                string type       = item.FieldType;
-                string methodName = "On" + item.FieldName;
-                string suffix     = "";
+                var type       = item.Type;
+                var methodName = "On" + item.Name;
+                var suffix     = "";
                 if (type.Contains("Button"))
                 {
                     suffix = "ButtonClick";
-                    CreateMethod(sb, ref methodDic, methodName + suffix);
+                    GenMethod(sb, methodName + suffix);
                 }
                 else if (type.Contains("InputField"))
                 {
                     suffix = "InputChange";
-                    CreateMethod(sb, ref methodDic, methodName + suffix, "string text");
+                    GenMethod(sb, methodName + suffix, "string text");
                     suffix = "InputEnd";
-                    CreateMethod(sb, ref methodDic, methodName + suffix, "string text");
+                    GenMethod(sb, methodName + suffix, "string text");
                 }
                 else if (type.Contains("Toggle"))
                 {
                     suffix = "ToggleChange";
-                    CreateMethod(sb, ref methodDic, methodName + suffix, "bool state,Toggle toggle");
+                    GenMethod(sb, methodName + suffix, "bool state,Toggle toggle");
                 }
             }
 
+            sb.AppendLine($"\t\t // End UI Component Events");
+            sb.AppendLine($"");
+            sb.AppendLine($"\t\t #endregion");
+
+            // Custom Logic
+            sb.AppendLine($"\t");
+            sb.AppendLine($"\t\t #region - Custom Logic -");
+            sb.AppendLine($"");
+            sb.AppendLine($"");
+            sb.AppendLine($"");
             sb.AppendLine($"\t\t #endregion");
 
             sb.AppendLine("\t}");
@@ -212,107 +240,28 @@ namespace Framework.ZMUI.Editor
             return sb.ToString();
         }
 
-        /// <summary>
-        /// 生成UI事件方法
-        /// </summary>
-        /// <param name="sb"></param>
-        /// <param name="methodDic"></param>
-        /// <param name="modthName"></param>
-        /// <param name="param"></param>
-        public static void CreateMethod(
-            StringBuilder                  sb,
-            ref Dictionary<string, string> methodDic,
-            string                         methodName,
-            string                         param = "")
+        private static void GenMethod(StringBuilder sb, string methodName, string param = "")
         {
-            //声明UI组件事件
             sb.AppendLine($"\t\t private void {methodName}({param})");
             sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t");
             if (methodName == "OnCloseButtonClick")
             {
                 sb.AppendLine("\t\t\tHideWindow();");
             }
+            else
+            {
+                sb.AppendLine("\t\t");
+            }
 
             sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
 
-            //存储UI组件事件 提供给后续新增代码使用
-            StringBuilder builder = new StringBuilder();
-            builder.AppendLine($"\t\t private void {methodName}({param})");
-            builder.AppendLine("\t\t {");
-            builder.AppendLine("\t\t");
-            builder.AppendLine("\t\t }");
-            methodDic.Add(methodName, builder.ToString());
-        }
-
-        public static void PresWindowNodeData(Transform trans, string WinName)
-        {
-            for (int i = 0; i < trans.childCount; i++)
-            {
-                GameObject obj  = trans.GetChild(i).gameObject;
-                string     name = obj.name;
-                if (name.Contains("[") && name.Contains("]"))
-                {
-                    int    index     = name.IndexOf("]") + 1;
-                    string fieldName = name.Substring(index, name.Length - index); //获取字段昵称
-                    string fieldType = name.Substring(1, index - 2);               //获取字段类型
-
-                    objDataList.Add(new EditorObjectData
-                    {
-                        FieldName  = fieldName,
-                        FieldType  = fieldType,
-                        InstanceId = obj.GetInstanceID()
-                    });
-
-                    //计算该节点的查找路径
-                    string    objPath    = name; //UIContent/[Button]Close
-                    bool      isFindOver = false;
-                    Transform parent     = obj.transform;
-                    for (int k = 0; k < 20; k++)
-                    {
-                        for (int j = 0; j <= k; j++)
-                        {
-                            if (k == j)
-                            {
-                                parent = parent.parent;
-                                //如果父节点是当前窗口，说明查找已经结束
-                                if (string.Equals(parent.name, WinName))
-                                {
-                                    isFindOver = true;
-                                    break;
-                                }
-                                else
-                                {
-                                    objPath = objPath.Insert(0, parent.name + "/");
-                                }
-                            }
-                        }
-
-                        if (isFindOver)
-                        {
-                            break;
-                        }
-                    }
-
-                    objFindPathDic.Add(obj.GetInstanceID(), objPath);
-                }
-
-                PresWindowNodeData(trans.GetChild(i), WinName);
-            }
-        }
-
-        public static EditorObjectData GetEditorObjectData(int instanceId)
-        {
-            foreach (var item in objDataList)
-            {
-                if (item.InstanceId == instanceId)
-                {
-                    return item;
-                }
-            }
-
-            return null;
+            // 用於插入已存在的腳本使用
+            var builder = new StringBuilder();
+            builder.AppendLine($"\t private void {methodName}({param})");
+            builder.AppendLine("\t {");
+            builder.AppendLine("\t");
+            builder.AppendLine("\t }");
+            _methodCodeByMethodName.Add(methodName, builder.ToString());
         }
     }
 }

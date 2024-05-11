@@ -414,6 +414,7 @@ GameObject:
   - component: {fileID: 5453338321119661394}
   - component: {fileID: 5520299546718599667}
   - component: {fileID: 2688552354160170937}
+  - component: {fileID: 6925702894772151901}
   m_Layer: 0
   m_Name: LoginWindow
   m_TagString: Untagged
@@ -517,6 +518,20 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &6925702894772151901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6389683029124641557}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c69d8e8dadeb74489cd1d989fc7d8b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIComponents:
+  - {fileID: 379743632597885108}
 --- !u!1 &7055464579323045305
 GameObject:
   m_ObjectHideFlags: 0
