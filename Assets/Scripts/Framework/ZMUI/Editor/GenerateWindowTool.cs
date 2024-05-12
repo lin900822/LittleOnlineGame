@@ -82,8 +82,8 @@ namespace Framework.ZMUI.Editor
             sb.AppendLine(" - Date: " + System.DateTime.Now);
             sb.AppendLine(" - 注意事項:");
             sb.AppendLine(" - 1. 請不要刪除或修改 \"// Start XXX\" 和 \"// End XXX\" 等相關的註解, 自動生成器會依賴他們");
-            sb.AppendLine(" - 2. 請不要在 \"// Start UI Components Fields\" 和 \"// End UI Components Fields\" 之間加入新的程式碼");
-            sb.AppendLine(" - 3. 請不要在 \"// Start Start InitUIComponent\" 和 \"// End Start InitUIComponent\" 之間加入新的程式碼");
+            sb.AppendLine(" - 2. 請不要在 \"Start UI Components Fields\" 和 \"End UI Components Fields\" 之間加入新的程式碼");
+            sb.AppendLine(" - 3. 請不要在 \"Start Start InitUIComponent\" 和 \"End Start InitUIComponent\" 之間加入新的程式碼");
             sb.AppendLine("---------------------------------*/");
             sb.AppendLine("using UnityEngine.UI;");
             sb.AppendLine("using UnityEngine;");
@@ -157,14 +157,14 @@ namespace Framework.ZMUI.Editor
                 if (type.Contains("InputField"))
                 {
                     sb.AppendLine(
-                        $"\t\t\t target.AddInputFieldListener({methodName}{type}, On{methodName}InputChange,mWindow.On{methodName}InputEnd);");
+                        $"\t\t\t AddInputFieldListener({methodName}{type}, On{methodName}InputChange, On{methodName}InputEnd);");
                 }
 
                 if (type.Contains("Toggle"))
                 {
                     suffix = "Change";
                     sb.AppendLine(
-                        $"\t\t\t target.AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
+                        $"\t\t\t AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
                 }
             }
             sb.AppendLine("\t\t\t // End InitUIComponent");

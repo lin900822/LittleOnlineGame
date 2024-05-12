@@ -1,10 +1,10 @@
 /*---------------------------------
  - Title: UI腳本生成工具
- - Date: 2024/5/12 上午 02:33:20
+ - Date: 2024/5/12 下午 02:39:23
  - 注意事項:
  - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
- - 2. 請不要在 "// Start UI Components Fields" 和 "// End UI Components Fields" 之間加入新的程式碼
- - 3. 請不要在 "// Start Start InitUIComponent" 和 "// End Start InitUIComponent" 之間加入新的程式碼
+ - 2. 請不要在 "Start UI Components Fields" 和 "End UI Components Fields" 之間加入新的程式碼
+ - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
 
 using UnityEngine.UI;
@@ -18,13 +18,7 @@ namespace Game.ZMUI
         #region - UI Components Fields -
 
         // Start UI Components Fields
-        private Text       TitleText;
-        private GameObject ImageGameObject;
-        private Button     CloseButton;
-        private Button     OpenLoginButton;
-        private Button     OpenFriendButton;
-        private Button     OpenInfoButton;
-        private Button     OpenMissionButton;
+        private Button CloseButton;
         // End UI Components Fields
 
         #endregion
@@ -68,23 +62,6 @@ namespace Game.ZMUI
         private void OnCloseButtonClick()
         {
             HideWindow();
-        }
-
-        private void OnOpenLoginButtonClick()
-        {
-            UIModule.Instance.PopUpWindow<LoginWindow>();
-        }
-
-        private void OnOpenFriendButtonClick()
-        {
-        }
-
-        private void OnOpenInfoButtonClick()
-        {
-        }
-
-        private void OnOpenMissionButtonClick()
-        {
         }
         // End UI Component Events
 
