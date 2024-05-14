@@ -21,7 +21,7 @@ public class ZMUIEntry : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.W))
         {
-            UIModule.Instance.PopUpWindow<TemplateWindow>();
+            UIModule.Instance.PopUpWindow<TestWindow>();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {

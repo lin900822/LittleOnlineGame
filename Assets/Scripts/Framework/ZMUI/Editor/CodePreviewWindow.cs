@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.RegularExpressions;
 using UnityEditor;
@@ -9,16 +10,16 @@ namespace Framework.ZMUI.Editor
     public class CodePreviewWindow : EditorWindow
     {
         private string  _codeContent;
+        private string  _originContent;
         private string  _filePath;
-        private Vector2 _scroll = new Vector2();
+        private Vector2 _scroll;
+        private Action  _generateBtnCallback;
 
-        /// <summary>
-        /// 显示代码展示窗口
-        /// </summary>
         public static void ShowCodePreviewWindow(
             string                     content,
             string                     filePath,
-            Dictionary<string, string> methodCodeByMethodName = null)
+            Dictionary<string, string> methodCodeByMethodName = null,
+            Action                     generateBtnCallback    = null)
         {
             var window = (CodePreviewWindow)GetWindowWithRect(typeof(CodePreviewWindow),
                 new Rect(100, 50, 1000, 800), true, "Code Generate Preview");
@@ -29,27 +30,37 @@ namespace Framework.ZMUI.Editor
             if (File.Exists(filePath) && methodCodeByMethodName != null)
             {
                 var originCode = File.ReadAllText(filePath);
+                window._originContent = originCode;
 
-                originCode = ReplaceContentBetween(originCode, content, "// Start UI Components Fields",
+                originCode = ReplaceContentBetween(
+                    originCode,
+                    content,
+                    "// Start UI Components Fields",
                     "// End UI Components Fields");
-                originCode = ReplaceContentBetween(originCode, content, "// Start InitUIComponent",
+                originCode = ReplaceContentBetween(
+                    originCode,
+                    content,
+                    "// Start InitUIComponent",
                     "// End InitUIComponent");
 
                 // 新增方法
-                var methodCodeStartIndex  = originCode.IndexOf("// Start UI Component Events");
-                var methodCodeEndIndex  = originCode.IndexOf("// End UI Component Events");
-                var originMethodCode = originCode.Substring(methodCodeStartIndex, methodCodeEndIndex - methodCodeStartIndex);
+                var methodCodeStartIndex = originCode.IndexOf("// Start UI Component Events");
+                var methodCodeEndIndex   = originCode.IndexOf("// End UI Component Events");
+                var originMethodCode =
+                    originCode.Substring(methodCodeStartIndex, methodCodeEndIndex - methodCodeStartIndex);
 
                 foreach (var method in methodCodeByMethodName)
                 {
                     if (originMethodCode.Contains(method.Key)) continue;
 
                     var index = window.GetInsertMethodIndex(originCode);
-                    originCode = originCode.Insert(index, "\n" + method.Value);
+                    originCode = originCode.Insert(index + 2, method.Value);
                 }
 
                 window._codeContent = originCode;
             }
+
+            window._generateBtnCallback = generateBtnCallback;
 
             window.Show();
         }
@@ -57,7 +68,13 @@ namespace Framework.ZMUI.Editor
         public void OnGUI()
         {
             _scroll = EditorGUILayout.BeginScrollView(_scroll, GUILayout.Height(720), GUILayout.Width(1000));
-            EditorGUILayout.TextArea(_codeContent);
+            
+            string coloredContent = GetColoredContent(_originContent, _codeContent);
+            // Use EditorGUILayout.TextArea for displaying the result.
+            GUIStyle style = new GUIStyle(EditorStyles.textArea);
+            style.richText = true;
+            EditorGUILayout.TextArea(coloredContent, style);
+
             EditorGUILayout.EndScrollView();
             EditorGUILayout.Space();
 
@@ -77,6 +94,8 @@ namespace Framework.ZMUI.Editor
 
         private void OnGenerateButtonClick()
         {
+            _generateBtnCallback?.Invoke();
+
             if (File.Exists(_filePath))
             {
                 File.Delete(_filePath);
@@ -89,6 +108,7 @@ namespace Framework.ZMUI.Editor
             if (EditorUtility.DisplayDialog("Code Generator", "Generate Succeed！", "Confirm"))
             {
                 Close();
+                _generateBtnCallback = null;
             }
         }
 
@@ -144,6 +164,67 @@ namespace Framework.ZMUI.Editor
             string post = original.Substring(endA + endMarker.Length);
 
             return pre + replacement + post;
+        }
+
+        private static string GetColoredContent(string oldContent, string newContent)
+        {
+            string[] oldLines = oldContent.Split('\n');
+            string[] newLines = newContent.Split('\n');
+
+            int[,]                    lcsMatrix      = BuildLCSMatrix(oldLines, newLines);
+            System.Text.StringBuilder coloredContent = new System.Text.StringBuilder();
+
+            int oldIndex = oldLines.Length;
+            int newIndex = newLines.Length;
+
+            while (oldIndex > 0 || newIndex > 0)
+            {
+                if (oldIndex > 0 && newIndex > 0 && oldLines[oldIndex - 1] == newLines[newIndex - 1])
+                {
+                    // Line is unchanged
+                    coloredContent.Insert(0, $"<color=white>{newLines[newIndex - 1]}</color>\n");
+                    oldIndex--;
+                    newIndex--;
+                }
+                else if (newIndex > 0 &&
+                         (oldIndex == 0 || lcsMatrix[oldIndex, newIndex - 1] >= lcsMatrix[oldIndex - 1, newIndex]))
+                {
+                    // New line is added
+                    coloredContent.Insert(0, $"<color=#32CD32>{newLines[newIndex - 1]}</color>\n");
+                    newIndex--;
+                }
+                else if (oldIndex > 0 &&
+                         (newIndex == 0 || lcsMatrix[oldIndex, newIndex - 1] < lcsMatrix[oldIndex - 1, newIndex]))
+                {
+                    // Old line is deleted
+                    coloredContent.Insert(0, $"<color=#DC143C>{oldLines[oldIndex - 1]}</color>\n");
+                    oldIndex--;
+                }
+            }
+
+            return coloredContent.ToString();
+        }
+
+        private static int[,] BuildLCSMatrix(string[] oldLines, string[] newLines)
+        {
+            int[,] lcsMatrix = new int[oldLines.Length + 1, newLines.Length + 1];
+
+            for (int i = 1; i <= oldLines.Length; i++)
+            {
+                for (int j = 1; j <= newLines.Length; j++)
+                {
+                    if (oldLines[i - 1] == newLines[j - 1])
+                    {
+                        lcsMatrix[i, j] = lcsMatrix[i - 1, j - 1] + 1;
+                    }
+                    else
+                    {
+                        lcsMatrix[i, j] = Mathf.Max(lcsMatrix[i - 1, j], lcsMatrix[i, j - 1]);
+                    }
+                }
+            }
+
+            return lcsMatrix;
         }
     }
 }

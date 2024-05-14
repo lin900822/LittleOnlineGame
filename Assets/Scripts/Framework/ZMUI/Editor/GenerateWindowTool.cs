@@ -43,36 +43,37 @@ namespace Framework.ZMUI.Editor
 
             var prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(selectedGO);
 
-            if (!string.IsNullOrEmpty(prefabPath))
+            if (string.IsNullOrEmpty(prefabPath))
             {
-                using (var editScope = new PrefabUtility.EditPrefabContentsScope(prefabPath))
-                {
-                    var prefabRoot = editScope.prefabContentsRoot;
-
-                    var uiComponentContainer = prefabRoot.GetComponent<UIComponentContainer>();
-                    if (uiComponentContainer == null)
-                    {
-                        uiComponentContainer = selectedGO.AddComponent<UIComponentContainer>();
-                    }
-
-                    uiComponentContainer.UIComponents.Clear();
-                    foreach (var uiComponentInfo in _uiComponentInfos)
-                    {
-                        var uiGO = EditorUtility.InstanceIDToObject(uiComponentInfo.InstanceId) as GameObject;
-                        uiComponentContainer.UIComponents.Add(uiGO);
-                    }
-                }
-
-                Debug.Log($"已調整 {prefabPath} 的 UIComponentContainer");
-            }
-            else
-            {
-                Debug.LogError($"找不到指定路徑的Prefab {prefabPath}");
+                Debug.LogError($"請選擇Project視窗內的Prefab生成");
+                return;
             }
 
             var codeContent = GenCodeContent(selectedGO.name);
             var codePath    = GeneratorConfig.WindowGeneratePath + "/" + selectedGO.name + ".cs";
-            CodePreviewWindow.ShowCodePreviewWindow(codeContent, codePath, _methodCodeByMethodName);
+            CodePreviewWindow.ShowCodePreviewWindow(codeContent, codePath, _methodCodeByMethodName,
+                () => { AdjustUIComponentContainer(prefabPath, selectedGO); });
+        }
+
+        private static void AdjustUIComponentContainer(string prefabPath, GameObject selectedGO)
+        {
+            using (var editScope = new PrefabUtility.EditPrefabContentsScope(prefabPath))
+            {
+                var prefabRoot = editScope.prefabContentsRoot;
+
+                var uiComponentContainer = prefabRoot.GetComponent<UIComponentContainer>();
+                if (uiComponentContainer == null)
+                {
+                    uiComponentContainer = selectedGO.AddComponent<UIComponentContainer>();
+                }
+
+                uiComponentContainer.UIComponents.Clear();
+                foreach (var uiComponentInfo in _uiComponentInfos)
+                {
+                    var uiGO = EditorUtility.InstanceIDToObject(uiComponentInfo.InstanceId) as GameObject;
+                    uiComponentContainer.UIComponents.Add(uiGO);
+                }
+            }
         }
 
         private static string GenCodeContent(string name)
@@ -82,7 +83,7 @@ namespace Framework.ZMUI.Editor
 
             sb.AppendLine("/*---------------------------------");
             sb.AppendLine(" - Title: UI腳本生成工具");
-            sb.AppendLine(" - Date: " + DateTime.Now);
+            sb.AppendLine(" - Created Date: " + DateTime.Now);
             sb.AppendLine(" - 注意事項:");
             sb.AppendLine(" - 1. 請不要刪除或修改 \"// Start XXX\" 和 \"// End XXX\" 等相關的註解, 自動生成器會依賴他們");
             sb.AppendLine(" - 2. 請不要在 \"Start UI Components Fields\" 和 \"End UI Components Fields\" 之間加入新的程式碼");
@@ -96,38 +97,38 @@ namespace Framework.ZMUI.Editor
             sb.AppendLine($"namespace Game.ZMUI");
             sb.AppendLine("{");
 
-            sb.AppendLine($"\tpublic class {name} : WindowBase");
-            sb.AppendLine("\t{");
+            sb.AppendLine($"    public class {name} : WindowBase");
+            sb.AppendLine("    {");
 
             // UI Components Fields
-            sb.AppendLine($"\t\t #region - UI Components Fields -");
+            sb.AppendLine($"        #region - UI Components Fields -");
             sb.AppendLine($"");
-            sb.AppendLine($"\t\t // Start UI Components Fields");
+            sb.AppendLine($"        // Start UI Components Fields");
             foreach (var item in _uiComponentInfos)
             {
-                sb.AppendLine($"\t\t private {item.Type} {item.Name}{item.Type};");
+                sb.AppendLine($"        private {item.Type} {item.Name}{item.Type};");
             }
 
-            sb.AppendLine($"\t\t // End UI Components Fields");
-            sb.AppendLine($"\t");
-            sb.AppendLine($"\t\t #endregion");
+            sb.AppendLine($"        // End UI Components Fields");
+            sb.AppendLine($"");
+            sb.AppendLine($"        #endregion");
 
             // Life Cycle
             sb.AppendLine("");
-            sb.AppendLine($"\t\t #region - Life Cycle -");
-            sb.AppendLine($"\t");
+            sb.AppendLine($"        #region - Life Cycle -");
+            sb.AppendLine($"");
             // OnLoaded
-            sb.AppendLine("\t\t public override void OnLoaded()");
-            sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t\t base.OnLoaded();");
-            sb.AppendLine("\t\t\t InitUIComponent();");
-            sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
+            sb.AppendLine("        public override void OnLoaded()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            base.OnLoaded();");
+            sb.AppendLine("            InitUIComponent();");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
             // InitUIComponent
-            sb.AppendLine("\t\t private void InitUIComponent()");
-            sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t\t // Start InitUIComponent");
+            sb.AppendLine("        private void InitUIComponent()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            // Start InitUIComponent");
             for (var i = 0; i < _uiComponentInfos.Count; i++)
             {
                 var node     = _uiComponentInfos[i];
@@ -135,15 +136,15 @@ namespace Framework.ZMUI.Editor
 
                 if (string.Equals("GameObject", node.Type))
                 {
-                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].gameObject;");
+                    sb.AppendLine($"            {fullName} = UIComponentContainer[{i}].gameObject;");
                 }
                 else if (string.Equals("Transform", node.Type))
                 {
-                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].transform;");
+                    sb.AppendLine($"            {fullName} = UIComponentContainer[{i}].transform;");
                 }
                 else
                 {
-                    sb.AppendLine($"\t\t\t {fullName} = UIComponentContainer[{i}].GetComponent<{node.Type}>();");
+                    sb.AppendLine($"            {fullName} = UIComponentContainer[{i}].GetComponent<{node.Type}>();");
                 }
             }
 
@@ -155,55 +156,57 @@ namespace Framework.ZMUI.Editor
                 if (type.Contains("Button"))
                 {
                     suffix = "Click";
-                    sb.AppendLine($"\t\t\t AddButtonClickListener({methodName}{type}, On{methodName}Button{suffix});");
+                    sb.AppendLine(
+                        $"            AddButtonClickListener({methodName}{type}, On{methodName}Button{suffix});");
                 }
 
                 if (type.Contains("InputField"))
                 {
                     sb.AppendLine(
-                        $"\t\t\t AddInputFieldListener({methodName}{type}, On{methodName}InputChange, On{methodName}InputEnd);");
+                        $"            AddInputFieldListener({methodName}{type}, On{methodName}InputChange, On{methodName}InputEnd);");
                 }
 
                 if (type.Contains("Toggle"))
                 {
                     suffix = "Change";
                     sb.AppendLine(
-                        $"\t\t\t AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
+                        $"            AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
                 }
             }
 
-            sb.AppendLine("\t\t\t // End InitUIComponent");
-            sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
+            sb.AppendLine("            // End InitUIComponent");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
             // OnShow
-            sb.AppendLine("\t\t public override void OnShow()");
-            sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t\t base.OnShow();");
-            sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
+            sb.AppendLine("        public override void OnShow()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            base.OnShow();");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
             // OnHide
-            sb.AppendLine("\t\t public override void OnHide()");
-            sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t\t base.OnHide();");
-            sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
+            sb.AppendLine("        public override void OnHide()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            base.OnHide();");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
             // OnUnloaded
-            sb.AppendLine("\t\t public override void OnUnloaded()");
-            sb.AppendLine("\t\t {");
-            sb.AppendLine("\t\t\t base.OnUnloaded();");
-            sb.AppendLine("\t\t }");
-            sb.AppendLine("\t");
+            sb.AppendLine("        public override void OnUnloaded()");
+            sb.AppendLine("        {");
+            sb.AppendLine("            base.OnUnloaded();");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
-            sb.AppendLine($"\t\t #endregion");
-            sb.AppendLine($"\t");
+            sb.AppendLine($"        #endregion");
+            sb.AppendLine($"");
 
             // UI Component Events 
-            sb.AppendLine($"\t\t #region - UI Component Events -");
+            sb.AppendLine($"        #region - UI Component Events -");
+            sb.AppendLine($"        ");
+            sb.AppendLine($"        // Start UI Component Events");
             sb.AppendLine($"");
-            sb.AppendLine($"\t\t // Start UI Component Events");
             foreach (var item in _uiComponentInfos)
             {
                 var type       = item.Type;
@@ -228,44 +231,46 @@ namespace Framework.ZMUI.Editor
                 }
             }
 
-            sb.AppendLine($"\t\t // End UI Component Events");
-            sb.AppendLine($"");
-            sb.AppendLine($"\t\t #endregion");
+            sb.AppendLine($"        // End UI Component Events");
+            sb.AppendLine($"        ");
+            sb.AppendLine($"        #endregion");
 
             // Custom Logic
-            sb.AppendLine($"\t");
-            sb.AppendLine($"\t\t #region - Custom Logic -");
             sb.AppendLine($"");
-            sb.AppendLine($"");
-            sb.AppendLine($"");
-            sb.AppendLine($"\t\t #endregion");
+            sb.AppendLine($"        #region - Custom Logic -");
+            sb.AppendLine($"        ");
+            sb.AppendLine($"        ");
+            sb.AppendLine($"        ");
+            sb.AppendLine($"        #endregion");
 
-            sb.AppendLine("\t}");
+            sb.AppendLine("    }");
             sb.AppendLine("}");
             return sb.ToString();
         }
 
         private static void GenMethod(StringBuilder sb, string methodName, string param = "")
         {
-            sb.AppendLine($"\t\t private void {methodName}({param})");
-            sb.AppendLine("\t\t {");
+            sb.AppendLine($"        private void {methodName}({param})");
+            sb.AppendLine("        {");
             if (methodName == "OnCloseButtonClick")
             {
-                sb.AppendLine("\t\t\tHideWindow();");
+                sb.AppendLine("            HideWindow();");
             }
             else
             {
-                sb.AppendLine("\t\t");
+                sb.AppendLine("            ");
             }
 
-            sb.AppendLine("\t\t }");
+            sb.AppendLine("        }");
+            sb.AppendLine("");
 
             // 用於插入已存在的腳本使用
             var builder = new StringBuilder();
-            builder.AppendLine($"\t private void {methodName}({param})");
-            builder.AppendLine("\t {");
-            builder.AppendLine("\t");
-            builder.AppendLine("\t }");
+            builder.AppendLine($"        private void {methodName}({param})");
+            builder.AppendLine("        {");
+            builder.AppendLine("            ");
+            builder.AppendLine("        }");
+            builder.AppendLine("");
             _methodCodeByMethodName.Add(methodName, builder.ToString());
         }
 
@@ -279,7 +284,7 @@ namespace Framework.ZMUI.Editor
                 {
                     var index = goName.IndexOf("]") + 1;
                     var name  = goName.Substring(index, goName.Length - index);
-                    var type  = goName.Substring(1, index - 2);
+                    var type  = goName.Substring(1,     index - 2);
 
                     name = name.Replace(" ", "");
 

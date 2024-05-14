@@ -26,6 +26,7 @@ namespace Game.ZMUI
         private Button     OpenFriendButton;
         private Button     OpenInfoButton;
         private Button     OpenActivityButton;
+        private Button     ChargeButton;
         private GameObject ActivityBannerGameObject;
         private InputField NameInputField;
         private InputField DescriptionInputField;
@@ -55,17 +56,19 @@ namespace Game.ZMUI
             OpenFriendButton         = UIComponentContainer[3].GetComponent<Button>();
             OpenInfoButton           = UIComponentContainer[4].GetComponent<Button>();
             OpenActivityButton       = UIComponentContainer[5].GetComponent<Button>();
-            ActivityBannerGameObject = UIComponentContainer[6].gameObject;
-            NameInputField           = UIComponentContainer[7].GetComponent<InputField>();
-            DescriptionInputField    = UIComponentContainer[8].GetComponent<InputField>();
-            RememberToggle           = UIComponentContainer[9].GetComponent<Toggle>();
-            CharacterImage           = UIComponentContainer[10].GetComponent<Image>();
-            AddButtonClickListener(CloseButton, OnCloseButtonClick);
-            AddButtonClickListener(OpenLoginButton, OnOpenLoginButtonClick);
-            AddButtonClickListener(OpenFriendButton, OnOpenFriendButtonClick);
-            AddButtonClickListener(OpenInfoButton, OnOpenInfoButtonClick);
+            ChargeButton             = UIComponentContainer[6].GetComponent<Button>();
+            ActivityBannerGameObject = UIComponentContainer[7].gameObject;
+            NameInputField           = UIComponentContainer[8].GetComponent<InputField>();
+            DescriptionInputField    = UIComponentContainer[9].GetComponent<InputField>();
+            RememberToggle           = UIComponentContainer[10].GetComponent<Toggle>();
+            CharacterImage           = UIComponentContainer[11].GetComponent<Image>();
+            AddButtonClickListener(CloseButton,        OnCloseButtonClick);
+            AddButtonClickListener(OpenLoginButton,    OnOpenLoginButtonClick);
+            AddButtonClickListener(OpenFriendButton,   OnOpenFriendButtonClick);
+            AddButtonClickListener(OpenInfoButton,     OnOpenInfoButtonClick);
             AddButtonClickListener(OpenActivityButton, OnOpenActivityButtonClick);
-            AddInputFieldListener(NameInputField, OnNameInputChange, OnNameInputEnd);
+            AddButtonClickListener(ChargeButton,       OnChargeButtonClick);
+            AddInputFieldListener(NameInputField,        OnNameInputChange,        OnNameInputEnd);
             AddInputFieldListener(DescriptionInputField, OnDescriptionInputChange, OnDescriptionInputEnd);
             AddToggleClickListener(RememberToggle, OnRememberToggleChange);
             // End InitUIComponent
@@ -143,6 +146,11 @@ namespace Game.ZMUI
         {
             Debug.Log($"OnDescriptionInputEnd {text}");
         }
+
+        private void OnChargeButtonClick()
+        {
+        }
+
         // End UI Component Events
 
         #endregion
