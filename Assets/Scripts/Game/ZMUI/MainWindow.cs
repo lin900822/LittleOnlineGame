@@ -7,9 +7,11 @@
  - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
 
-using UnityEngine.UI;
-using UnityEngine;
+using System;
+using System.Threading.Tasks;
 using Framework.ZMUI;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.ZMUI
 {
@@ -19,12 +21,16 @@ namespace Game.ZMUI
 
         // Start UI Components Fields
         private Text       TitleText;
-        private GameObject ImageGameObject;
         private Button     CloseButton;
+        private Button     OpenLoginButton;
         private Button     OpenFriendButton;
         private Button     OpenInfoButton;
-        private Button     OpenMissionButton;
-        private Button     OpenLoginButton;
+        private Button     OpenActivityButton;
+        private GameObject ActivityBannerGameObject;
+        private InputField NameInputField;
+        private InputField DescriptionInputField;
+        private Toggle     RememberToggle;
+        private Image      CharacterImage;
         // End UI Components Fields
 
         #endregion
@@ -35,34 +41,48 @@ namespace Game.ZMUI
         {
             base.OnLoaded();
             InitUIComponent();
+
+            CharacterImage.gameObject.SetActive(false);
+            ActivityBannerGameObject.SetActive(false);
         }
 
         private void InitUIComponent()
         {
             // Start InitUIComponent
-            TitleText         = UIComponentContainer[0].GetComponent<Text>();
-            ImageGameObject   = UIComponentContainer[1].gameObject;
-            CloseButton       = UIComponentContainer[2].GetComponent<Button>();
-            OpenFriendButton  = UIComponentContainer[3].GetComponent<Button>();
-            OpenInfoButton    = UIComponentContainer[4].GetComponent<Button>();
-            OpenMissionButton = UIComponentContainer[5].GetComponent<Button>();
-            OpenLoginButton   = UIComponentContainer[6].GetComponent<Button>();
+            TitleText                = UIComponentContainer[0].GetComponent<Text>();
+            CloseButton              = UIComponentContainer[1].GetComponent<Button>();
+            OpenLoginButton          = UIComponentContainer[2].GetComponent<Button>();
+            OpenFriendButton         = UIComponentContainer[3].GetComponent<Button>();
+            OpenInfoButton           = UIComponentContainer[4].GetComponent<Button>();
+            OpenActivityButton       = UIComponentContainer[5].GetComponent<Button>();
+            ActivityBannerGameObject = UIComponentContainer[6].gameObject;
+            NameInputField           = UIComponentContainer[7].GetComponent<InputField>();
+            DescriptionInputField    = UIComponentContainer[8].GetComponent<InputField>();
+            RememberToggle           = UIComponentContainer[9].GetComponent<Toggle>();
+            CharacterImage           = UIComponentContainer[10].GetComponent<Image>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            AddButtonClickListener(OpenLoginButton, OnOpenLoginButtonClick);
             AddButtonClickListener(OpenFriendButton, OnOpenFriendButtonClick);
             AddButtonClickListener(OpenInfoButton, OnOpenInfoButtonClick);
-            AddButtonClickListener(OpenMissionButton, OnOpenMissionButtonClick);
-            AddButtonClickListener(OpenLoginButton, OnOpenLoginButtonClick);
+            AddButtonClickListener(OpenActivityButton, OnOpenActivityButtonClick);
+            AddInputFieldListener(NameInputField, OnNameInputChange, OnNameInputEnd);
+            AddInputFieldListener(DescriptionInputField, OnDescriptionInputChange, OnDescriptionInputEnd);
+            AddToggleClickListener(RememberToggle, OnRememberToggleChange);
             // End InitUIComponent
         }
 
         public override void OnShow()
         {
             base.OnShow();
+
+            Debug.Log("OnShow");
         }
 
         public override void OnHide()
         {
             base.OnHide();
+
+            Debug.Log("OnHide");
         }
 
         public override void OnUnloaded()
@@ -82,25 +102,63 @@ namespace Game.ZMUI
 
         private void OnOpenFriendButtonClick()
         {
+            TestTask();
         }
 
         private void OnOpenInfoButtonClick()
         {
-        }
-
-        private void OnOpenMissionButtonClick()
-        {
+            ActivityBannerGameObject.SetActive(false);
+            CharacterImage.gameObject.SetActive(true);
         }
 
         private void OnOpenLoginButtonClick()
         {
             UIModule.Instance.PopUpWindow<LoginWindow>();
         }
+
+        private void OnOpenActivityButtonClick()
+        {
+            ActivityBannerGameObject.SetActive(true);
+            CharacterImage.gameObject.SetActive(false);
+        }
+
+        private void OnNameInputChange(string text)
+        {
+        }
+
+        private void OnNameInputEnd(string text)
+        {
+            Debug.Log($"OnNameInputEnd {text}");
+        }
+
+        private void OnRememberToggleChange(bool state, Toggle toggle)
+        {
+        }
+
+        private void OnDescriptionInputChange(string text)
+        {
+        }
+
+        private void OnDescriptionInputEnd(string text)
+        {
+            Debug.Log($"OnDescriptionInputEnd {text}");
+        }
         // End UI Component Events
 
         #endregion
 
         #region - Custom Logic -
+
+        private async Task TestTask()
+        {
+            Debug.Log($"Before Task Thread Id: {Environment.CurrentManagedThreadId}");
+            for (int i = 0; i < 100; i++)
+            {
+                await Task.Run(() => { Debug.Log($"In Task Thread Id: {Environment.CurrentManagedThreadId}"); });
+            }
+
+            Debug.Log($"After Task Thread Id: {Environment.CurrentManagedThreadId}");
+        }
 
         #endregion
     }

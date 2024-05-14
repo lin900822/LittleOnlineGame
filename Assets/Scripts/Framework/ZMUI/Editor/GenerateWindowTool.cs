@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,7 @@ namespace Framework.ZMUI.Editor
 {
     public class UIComponentInfo
     {
+        public int    InstanceId;
         public string Name;
         public string Type;
     }
@@ -17,11 +19,9 @@ namespace Framework.ZMUI.Editor
     {
         private static List<UIComponentInfo> _uiComponentInfos = new List<UIComponentInfo>();
 
-        private static List<GameObject> _uiComponents;
-
         private static Dictionary<string, string> _methodCodeByMethodName = new Dictionary<string, string>();
 
-        [MenuItem("/GameObject/UI腳本生成工具/生成Window腳本(Shift+V) #V", false, 0)]
+        [MenuItem("/Assets/UI腳本生成工具/生成Window腳本(Shift+V) #V", false, 0)]
         private static void CreateFindComponentScripts()
         {
             _uiComponentInfos.Clear();
@@ -39,39 +39,42 @@ namespace Framework.ZMUI.Editor
                 Directory.CreateDirectory(GeneratorConfig.WindowGeneratePath);
             }
 
-            var container = selectedGO.GetComponent<UIComponentContainer>();
-            if (container == null)
+            ParseNodeData(selectedGO.transform);
+
+            var prefabPath = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(selectedGO);
+
+            if (!string.IsNullOrEmpty(prefabPath))
             {
-                Debug.LogError("此物件沒有 UIComponentContainer");
-                return;
-            }
-            
-            _uiComponents = container.UIComponents;
-            
-            foreach (var item in _uiComponents)
-            {
-                var uiComponentName = item.name;
-                if (uiComponentName.Contains("[") && uiComponentName.Contains("]"))
+                using (var editScope = new PrefabUtility.EditPrefabContentsScope(prefabPath))
                 {
-                    var index     = uiComponentName.IndexOf("]") + 1;
-                    var fieldName = uiComponentName.Substring(index, uiComponentName.Length - index);
-                    var fieldType = uiComponentName.Substring(1, index - 2);
-                    
-                    _uiComponentInfos.Add(new UIComponentInfo()
+                    var prefabRoot = editScope.prefabContentsRoot;
+
+                    var uiComponentContainer = prefabRoot.GetComponent<UIComponentContainer>();
+                    if (uiComponentContainer == null)
                     {
-                        Name = fieldName,
-                        Type = fieldType,
-                    });
+                        uiComponentContainer = selectedGO.AddComponent<UIComponentContainer>();
+                    }
+
+                    uiComponentContainer.UIComponents.Clear();
+                    foreach (var uiComponentInfo in _uiComponentInfos)
+                    {
+                        var uiGO = EditorUtility.InstanceIDToObject(uiComponentInfo.InstanceId) as GameObject;
+                        uiComponentContainer.UIComponents.Add(uiGO);
+                    }
                 }
+
+                Debug.Log($"已調整 {prefabPath} 的 UIComponentContainer");
+            }
+            else
+            {
+                Debug.LogError($"找不到指定路徑的Prefab {prefabPath}");
             }
 
             var codeContent = GenCodeContent(selectedGO.name);
             var codePath    = GeneratorConfig.WindowGeneratePath + "/" + selectedGO.name + ".cs";
             CodePreviewWindow.ShowCodePreviewWindow(codeContent, codePath, _methodCodeByMethodName);
-
-            _uiComponents = null;
         }
-        
+
         private static string GenCodeContent(string name)
         {
             _methodCodeByMethodName.Clear();
@@ -79,7 +82,7 @@ namespace Framework.ZMUI.Editor
 
             sb.AppendLine("/*---------------------------------");
             sb.AppendLine(" - Title: UI腳本生成工具");
-            sb.AppendLine(" - Date: " + System.DateTime.Now);
+            sb.AppendLine(" - Date: " + DateTime.Now);
             sb.AppendLine(" - 注意事項:");
             sb.AppendLine(" - 1. 請不要刪除或修改 \"// Start XXX\" 和 \"// End XXX\" 等相關的註解, 自動生成器會依賴他們");
             sb.AppendLine(" - 2. 請不要在 \"Start UI Components Fields\" 和 \"End UI Components Fields\" 之間加入新的程式碼");
@@ -92,7 +95,7 @@ namespace Framework.ZMUI.Editor
 
             sb.AppendLine($"namespace Game.ZMUI");
             sb.AppendLine("{");
-            
+
             sb.AppendLine($"\tpublic class {name} : WindowBase");
             sb.AppendLine("\t{");
 
@@ -104,6 +107,7 @@ namespace Framework.ZMUI.Editor
             {
                 sb.AppendLine($"\t\t private {item.Type} {item.Name}{item.Type};");
             }
+
             sb.AppendLine($"\t\t // End UI Components Fields");
             sb.AppendLine($"\t");
             sb.AppendLine($"\t\t #endregion");
@@ -167,6 +171,7 @@ namespace Framework.ZMUI.Editor
                         $"\t\t\t AddToggleClickListener({methodName}{type}, On{methodName}Toggle{suffix});");
                 }
             }
+
             sb.AppendLine("\t\t\t // End InitUIComponent");
             sb.AppendLine("\t\t }");
             sb.AppendLine("\t");
@@ -262,6 +267,32 @@ namespace Framework.ZMUI.Editor
             builder.AppendLine("\t");
             builder.AppendLine("\t }");
             _methodCodeByMethodName.Add(methodName, builder.ToString());
+        }
+
+        private static void ParseNodeData(Transform trans)
+        {
+            for (var i = 0; i < trans.childCount; i++)
+            {
+                var go     = trans.GetChild(i).gameObject;
+                var goName = go.name;
+                if (goName.Contains("[") && goName.Contains("]"))
+                {
+                    var index = goName.IndexOf("]") + 1;
+                    var name  = goName.Substring(index, goName.Length - index);
+                    var type  = goName.Substring(1, index - 2);
+
+                    name = name.Replace(" ", "");
+
+                    _uiComponentInfos.Add(new UIComponentInfo()
+                    {
+                        Name       = name,
+                        Type       = type,
+                        InstanceId = go.GetInstanceID()
+                    });
+                }
+
+                ParseNodeData(trans.GetChild(i));
+            }
         }
     }
 }

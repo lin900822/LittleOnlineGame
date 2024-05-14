@@ -413,7 +413,7 @@ GameObject:
   - component: {fileID: 5453338321119661394}
   - component: {fileID: 5520299546718599667}
   - component: {fileID: 2688552354160170937}
-  - component: {fileID: 6394321892078677040}
+  - component: {fileID: -2934996444527789676}
   m_Layer: 0
   m_Name: TemplateWindow
   m_TagString: Untagged
@@ -517,7 +517,7 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &6394321892078677040
+--- !u!114 &-2934996444527789676
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
