@@ -72,7 +72,8 @@ namespace Framework.ZMUI.Editor
             string coloredContent = GetColoredContent(_originContent, _codeContent);
             // Use EditorGUILayout.TextArea for displaying the result.
             GUIStyle style = new GUIStyle(EditorStyles.textArea);
-            style.richText = true;
+            style.richText  = true;
+            style.fontSize  = 14;
             EditorGUILayout.TextArea(coloredContent, style);
 
             EditorGUILayout.EndScrollView();
@@ -182,7 +183,7 @@ namespace Framework.ZMUI.Editor
                 if (oldIndex > 0 && newIndex > 0 && oldLines[oldIndex - 1] == newLines[newIndex - 1])
                 {
                     // Line is unchanged
-                    coloredContent.Insert(0, $"<color=white>{newLines[newIndex - 1]}</color>\n");
+                    coloredContent.Insert(0, $"<color=#D3D3D3>{newLines[newIndex - 1]}</color>\n");
                     oldIndex--;
                     newIndex--;
                 }
