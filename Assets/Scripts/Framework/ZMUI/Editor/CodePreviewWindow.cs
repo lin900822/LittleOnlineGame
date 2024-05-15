@@ -68,7 +68,11 @@ namespace Framework.ZMUI.Editor
         public void OnGUI()
         {
             _scroll = EditorGUILayout.BeginScrollView(_scroll, GUILayout.Height(720), GUILayout.Width(1000));
-            
+
+            if (string.IsNullOrWhiteSpace(_originContent))
+            {
+                _originContent = "";
+            }
             string coloredContent = GetColoredContent(_originContent, _codeContent);
             // Use EditorGUILayout.TextArea for displaying the result.
             GUIStyle style = new GUIStyle(EditorStyles.textArea);
