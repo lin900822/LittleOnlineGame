@@ -1,24 +1,24 @@
 /*---------------------------------
  - Title: UI腳本生成工具
- - Date: 2024/5/14 上午 11:06:07
+ - Created Date: 2024/5/19 下午 07:37:15
  - 注意事項:
  - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
  - 2. 請不要在 "Start UI Components Fields" 和 "End UI Components Fields" 之間加入新的程式碼
  - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
-
 using UnityEngine.UI;
 using UnityEngine;
-using Framework.ZMUI;
+using Framework.UI;
 
-namespace Game.ZMUI
+namespace Game.UI
 {
-    public class TemplateWindow : WindowBase
+    public class TestStackWindow4 : WindowBase
     {
         #region - UI Components Fields -
 
         // Start UI Components Fields
         private Button CloseButton;
+        private Text TitleText;
         // End UI Components Fields
 
         #endregion
@@ -35,6 +35,7 @@ namespace Game.ZMUI
         {
             // Start InitUIComponent
             CloseButton = UIComponentContainer[0].GetComponent<Button>();
+            TitleText = UIComponentContainer[1].GetComponent<Text>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
             // End InitUIComponent
         }
@@ -57,18 +58,22 @@ namespace Game.ZMUI
         #endregion
 
         #region - UI Component Events -
-
+        
         // Start UI Component Events
+
         private void OnCloseButtonClick()
         {
             HideWindow();
         }
-        // End UI Component Events
 
+        // End UI Component Events
+        
         #endregion
 
         #region - Custom Logic -
-
+        
+        
+        
         #endregion
     }
 }

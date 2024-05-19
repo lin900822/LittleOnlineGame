@@ -1,18 +1,19 @@
 /*---------------------------------
  - Title: UI腳本生成工具
- - Created Date: 5/19/2024 2:47:31 PM
+ - Created Date: 5/19/2024 2:47:47 PM
  - 注意事項:
  - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
  - 2. 請不要在 "Start UI Components Fields" 和 "End UI Components Fields" 之間加入新的程式碼
  - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
-using UnityEngine.UI;
-using UnityEngine;
-using Framework.ZMUI;
 
-namespace Game.ZMUI
+using Framework.UI;
+using UnityEngine;
+using UnityEngine.UI;
+
+namespace Game.UI
 {
-    public class TestStackWindow1 : WindowBase
+    public class TestStackWindow3 : WindowBase
     {
         #region - UI Components Fields -
 
@@ -54,7 +55,7 @@ namespace Game.ZMUI
         {
             base.OnUnloaded();
         }
-
+        
         public override void OnPopFromStack()
         {
             Debug.Log($"{GetType().Name} OnPopFromStack");

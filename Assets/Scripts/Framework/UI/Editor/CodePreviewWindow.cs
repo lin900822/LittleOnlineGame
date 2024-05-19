@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
 using UnityEditor;
 using UnityEngine;
 
-namespace Framework.ZMUI.Editor
+namespace Framework.UI.Editor
 {
     public class CodePreviewWindow : EditorWindow
     {

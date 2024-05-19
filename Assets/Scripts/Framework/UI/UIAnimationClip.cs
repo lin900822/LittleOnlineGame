@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Framework.ZMUI
+namespace Framework.UI
 {
     public abstract class UIAnimation
     {

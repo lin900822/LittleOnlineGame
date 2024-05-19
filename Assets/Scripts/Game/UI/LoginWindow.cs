@@ -7,11 +7,11 @@
  - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
 
-using UnityEngine.UI;
+using Framework.UI;
 using UnityEngine;
-using Framework.ZMUI;
+using UnityEngine.UI;
 
-namespace Game.ZMUI
+namespace Game.UI
 {
     public class LoginWindow : WindowBase
     {

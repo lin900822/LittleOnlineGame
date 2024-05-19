@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace Framework.ZMUI.Editor
+namespace Framework.UI.Editor
 {
     [CustomEditor(typeof(UIComponentContainer))]
     public class UIComponentContainerEditor : UnityEditor.Editor

@@ -42,8 +42,8 @@ namespace Framework.Editor
             InfoAttribute titleAttribute = (InfoAttribute)attribute;
             GUIStyle      style          = new GUIStyle(GUI.skin.box);
             style.fontStyle         = FontStyle.Normal;
-            style.normal.textColor  = Color.gray;
-            style.alignment         = TextAnchor.MiddleCenter;
+            style.normal.textColor  = new Color(0.9f, 0.9f, 0.9f, 1f);
+            style.alignment         = TextAnchor.MiddleLeft;
             style.padding           = new RectOffset(10, 10, 5, 5);
             style.normal.background = MakeTex(1, 1, new Color(0.25f, 0.5f, 0.75f, 1f));
             EditorGUI.LabelField(position, titleAttribute.Info, style);

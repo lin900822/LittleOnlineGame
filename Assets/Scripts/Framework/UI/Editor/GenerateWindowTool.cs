@@ -6,7 +6,7 @@ using System.Text;
 using UnityEditor;
 using UnityEngine;
 
-namespace Framework.ZMUI.Editor
+namespace Framework.UI.Editor
 {
     public class UIComponentInfo
     {
@@ -91,10 +91,10 @@ namespace Framework.ZMUI.Editor
             sb.AppendLine("---------------------------------*/");
             sb.AppendLine("using UnityEngine.UI;");
             sb.AppendLine("using UnityEngine;");
-            sb.AppendLine("using Framework.ZMUI;");
+            sb.AppendLine("using Framework.UI;");
             sb.AppendLine();
 
-            sb.AppendLine($"namespace Game.ZMUI");
+            sb.AppendLine($"namespace Game.UI");
             sb.AppendLine("{");
 
             sb.AppendLine($"    public class {name} : WindowBase");

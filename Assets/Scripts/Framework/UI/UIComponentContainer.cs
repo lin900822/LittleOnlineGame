@@ -2,7 +2,7 @@
 using Framework.Common;
 using UnityEngine;
 
-namespace Framework.ZMUI
+namespace Framework.UI
 {
     public class UIComponentContainer : MonoBehaviour
     {

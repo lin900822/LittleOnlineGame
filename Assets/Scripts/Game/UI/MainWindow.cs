@@ -9,11 +9,11 @@
 
 using System;
 using System.Threading.Tasks;
-using Framework.ZMUI;
+using Framework.UI;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Game.ZMUI
+namespace Game.UI
 {
     public class MainWindow : WindowBase
     {
@@ -116,7 +116,7 @@ namespace Game.ZMUI
 
         private void OnOpenLoginButtonClick()
         {
-            UIModule.Instance.PopUpWindow<LoginWindow>();
+            UIManager.Instance.PopUpWindow<LoginWindow>();
         }
 
         private void OnOpenActivityButtonClick()

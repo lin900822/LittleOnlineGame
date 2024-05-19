@@ -1,19 +1,19 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Framework.ZMUI
+namespace Framework.UI
 {
-    public class UIModule
+    public class UIManager
     {
-        private static UIModule _instance;
+        private static UIManager _instance;
 
-        public static UIModule Instance
+        public static UIManager Instance
         {
             get
             {
                 if (_instance == null)
                 {
-                    _instance = new UIModule();
+                    _instance = new UIManager();
                 }
 
                 return _instance;

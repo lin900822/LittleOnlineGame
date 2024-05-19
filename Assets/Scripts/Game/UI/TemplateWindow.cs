@@ -1,24 +1,23 @@
 /*---------------------------------
  - Title: UI腳本生成工具
- - Created Date: 5/19/2024 2:47:38 PM
+ - Date: 2024/5/14 上午 11:06:07
  - 注意事項:
  - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
  - 2. 請不要在 "Start UI Components Fields" 和 "End UI Components Fields" 之間加入新的程式碼
  - 3. 請不要在 "Start Start InitUIComponent" 和 "End Start InitUIComponent" 之間加入新的程式碼
 ---------------------------------*/
-using UnityEngine.UI;
-using UnityEngine;
-using Framework.ZMUI;
 
-namespace Game.ZMUI
+using Framework.UI;
+using UnityEngine.UI;
+
+namespace Game.UI
 {
-    public class TestStackWindow2 : WindowBase
+    public class TemplateWindow : WindowBase
     {
         #region - UI Components Fields -
 
         // Start UI Components Fields
         private Button CloseButton;
-        private Text TitleText;
         // End UI Components Fields
 
         #endregion
@@ -35,7 +34,6 @@ namespace Game.ZMUI
         {
             // Start InitUIComponent
             CloseButton = UIComponentContainer[0].GetComponent<Button>();
-            TitleText = UIComponentContainer[1].GetComponent<Text>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
             // End InitUIComponent
         }
@@ -54,31 +52,22 @@ namespace Game.ZMUI
         {
             base.OnUnloaded();
         }
-        
-        public override void OnPopFromStack()
-        {
-            Debug.Log($"{GetType().Name} OnPopFromStack");
-        }
 
         #endregion
 
         #region - UI Component Events -
-        
-        // Start UI Component Events
 
+        // Start UI Component Events
         private void OnCloseButtonClick()
         {
             HideWindow();
         }
-
         // End UI Component Events
-        
+
         #endregion
 
         #region - Custom Logic -
-        
-        
-        
+
         #endregion
     }
 }

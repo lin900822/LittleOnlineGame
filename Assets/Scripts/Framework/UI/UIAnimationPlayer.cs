@@ -7,12 +7,12 @@ using DG.Tweening.Plugins.Options;
 using Framework.Common;
 using UnityEngine;
 
-namespace Framework.ZMUI
+namespace Framework.UI
 {
     [Serializable]
     public class UIAnimationPlayer
     {
-        [Info("需掛CanvasGroup")]
+        [Info("注意:Target需掛CanvasGroup")]
         [SerializeField] 
         private GameObject _target;
 

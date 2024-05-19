@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Framework.ZMUI.Editor
+namespace Framework.UI.Editor
 {
     public enum GenerateType
     {
@@ -17,7 +17,7 @@ namespace Framework.ZMUI.Editor
     {
         public static string BindComponentGeneratorPath = Application.dataPath + "/ZMUIFrameWork/Scripts/BindCompoent";
         public static string FindComponentGeneratorPath = Application.dataPath + "/ZMUIFrameWork/Scripts/FindCompoent";
-        public static string WindowGeneratePath = Application.dataPath + "/Scripts/Game/ZMUI";
+        public static string WindowGeneratePath = Application.dataPath + "/Scripts/Game/UI";
         public static string OBJDATALIST_KEY = "objDataList";
         public static GenerateType GenerateType = GenerateType.Bind;
         public static ParseType ParseType = ParseType.Name;

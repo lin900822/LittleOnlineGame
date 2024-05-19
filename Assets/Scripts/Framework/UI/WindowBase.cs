@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Framework.ZMUI
+namespace Framework.UI
 {
     public class WindowBase : WindowBehaviour
     {
@@ -87,7 +87,7 @@ namespace Framework.ZMUI
 
         public void HideWindow()
         {
-            PlayHideAnimation().Await(() => { UIModule.Instance.HideWindow(Name); },
+            PlayHideAnimation().Await(() => { UIManager.Instance.HideWindow(Name); },
                 (ex) => { Debug.LogError(ex.ToString()); });
         }
 
