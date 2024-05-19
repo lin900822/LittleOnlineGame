@@ -223,7 +223,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: -1
+  m_SortingOrder: 99
   m_TargetDisplay: 0
 --- !u!1 &519420028
 GameObject:
@@ -432,7 +432,7 @@ GameObject:
   - component: {fileID: 1090738153}
   - component: {fileID: 1090738152}
   m_Layer: 5
-  m_Name: Button (Legacy)
+  m_Name: Settings Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -678,7 +678,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: TEST
+  m_Text: SETTINGS
 --- !u!222 &1731229067
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -731,6 +731,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c492a0541bdb6024791eb961de111ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  SettingsButton: {fileID: 1090738152}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

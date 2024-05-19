@@ -1,10 +1,15 @@
+using System;
 using Framework.UI;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Game.UI
 {
     public class UIEntry : MonoBehaviour
     {
+        [SerializeField]
+        public Button SettingsButton;
+        
         private void Awake()
         {
             UIManager.Instance.Init();
@@ -12,10 +17,17 @@ namespace Game.UI
     
         void Start()
         {
-            UIManager.Instance.PushWindowToStack<TestStackWindow1>();
-            UIManager.Instance.PushWindowToStack<TestStackWindow2>();
-            UIManager.Instance.PushWindowToStack<TestStackWindow3>();
-            UIManager.Instance.PushWindowToStack<TestStackWindow4>();
+            SettingsButton.onClick.AddListener(OpenSettingsWindow);
+        }
+
+        private void OnDestroy()
+        {
+            SettingsButton.onClick.RemoveListener(OpenSettingsWindow);
+        }
+
+        void OpenSettingsWindow()
+        {
+            UIManager.Instance.PopUpWindow<SettingsWindow>();
         }
     
         public void Update()
@@ -27,40 +39,6 @@ namespace Game.UI
             if (Input.GetKeyDown(KeyCode.E))
             {
                 UIManager.Instance.PopUpWindow<MainWindow>();
-            }
-        
-            if (Input.GetKeyDown(KeyCode.Alpha1))
-            {
-                UIManager.Instance.PushWindowToStack<TestStackWindow1>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                UIManager.Instance.PushWindowToStack<TestStackWindow2>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
-            {
-                UIManager.Instance.PushWindowToStack<TestStackWindow3>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha4))
-            {
-                UIManager.Instance.PushWindowToStack<TestStackWindow4>();
-            }
-            
-            if (Input.GetKeyDown(KeyCode.Alpha5))
-            {
-                UIManager.Instance.PopUpWindow<TestStackWindow1>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
-            {
-                UIManager.Instance.PopUpWindow<TestStackWindow2>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
-            {
-                UIManager.Instance.PopUpWindow<TestStackWindow3>();
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha8))
-            {
-                UIManager.Instance.PopUpWindow<TestStackWindow4>();
             }
         }
     }
