@@ -86,6 +86,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2586437902862577194}
+  - component: {fileID: 2168959846206347948}
   m_Layer: 0
   m_Name: Content
   m_TagString: Untagged
@@ -113,6 +114,18 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!225 &2168959846206347948
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 353031908150623986}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &379743632597885108
 GameObject:
   m_ObjectHideFlags: 0
@@ -609,6 +622,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c69d8e8dadeb74489cd1d989fc7d8b1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UIAnimationPlayer:
+    _target: {fileID: 353031908150623986}
+  ShowAnimationClip: {fileID: 11400000, guid: b97a2323d6c85194da6488e242ea4b8d, type: 2}
+  HideAnimationClip: {fileID: 11400000, guid: a161cb8271038044cae8d4d920968b28, type: 2}
   UIComponents:
   - {fileID: 379743632597885108}
   - {fileID: 4465990643442667905}

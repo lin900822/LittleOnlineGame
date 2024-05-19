@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
-using DG.Tweening;
+using System.Threading.Tasks;
+using Common;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -38,7 +39,8 @@ namespace Framework.ZMUI
         public override void OnShow()
         {
             base.OnShow();
-            //ShowAnimation();
+            PlayShowAnimation().Await(null,
+                (ex) => { Debug.LogError(ex.ToString()); });
         }
 
         public override void OnUpdate()
@@ -66,41 +68,27 @@ namespace Framework.ZMUI
 
         #region - Animation -
 
-        // public void ShowAnimation()
-        // {
-        //     //基础弹窗不需要动画
-        //     if (Canvas.sortingOrder > 90 && _isDisableAnim == false)
-        //     {
-        //         //Mask动画
-        //         _uiMask.alpha = 0;
-        //         _uiMask.DOFade(1, 0.2f);
-        //         //缩放动画
-        //         _uiContent.localScale = Vector3.one * 0.8f;
-        //         _uiContent.DOScale(Vector3.one, 0.3f).SetEase(Ease.OutBack);
-        //     }
-        // }
-        //
-        // public void HideAnimation()
-        // {
-        //     if (Canvas.sortingOrder > 90 && _isDisableAnim == false)
-        //     {
-        //         _uiContent.DOScale(Vector3.one * 1.1f, 0.2f).SetEase(Ease.OutBack).OnComplete(() =>
-        //         {
-        //             UIModule.Instance.HideWindow(Name);
-        //         });
-        //     }
-        //     else
-        //     {
-        //         UIModule.Instance.HideWindow(Name);
-        //     }
-        // }
+        private async Task PlayShowAnimation()
+        {
+            await PlayAnimation(ShowAnimationClip);
+        }
+
+        private async Task PlayHideAnimation()
+        {
+            await PlayAnimation(HideAnimationClip);
+        }
+
+        private async Task PlayAnimation(UIAnimationClip clip)
+        {
+            await UIAnimationPlayer.PlayClip(clip);
+        }
 
         #endregion
 
         public void HideWindow()
         {
-            //HideAnimation();
-            UIModule.Instance.HideWindow(Name);
+            PlayHideAnimation().Await(() => { UIModule.Instance.HideWindow(Name); },
+                (ex) => { Debug.LogError(ex.ToString()); });
         }
 
         public override void SetVisible(bool isVisible)

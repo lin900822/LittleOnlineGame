@@ -14,9 +14,7 @@ public class ZMUIEntry : MonoBehaviour
     
     void Start()
     {
-        UIModule.Instance.PushWindowToStack<TestStackWindow1>();
-        UIModule.Instance.PushWindowToStack<TestStackWindow2>();
-        UIModule.Instance.PushWindowToStack<TestStackWindow3>();
+        
     }
     
     public void Update()

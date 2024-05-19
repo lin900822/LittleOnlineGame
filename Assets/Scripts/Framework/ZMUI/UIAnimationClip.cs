@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
 
-namespace Framework.UI
+namespace Framework.ZMUI
 {
     public abstract class UIAnimation
     {
@@ -39,5 +40,14 @@ namespace Framework.UI
     {
         public float StartAlpha;
         public float EndAlpha;
+    }
+    
+    [CreateAssetMenu(fileName = "ViewAnimationClip", menuName = "UIFramework/ViewAnimationClip")]
+    public class UIAnimationClip : ScriptableObject
+    {
+        public List<PositionAnimation> PositionAnimations;
+        public List<RotationAnimation> RotationAnimations;
+        public List<ScaleAnimation>    ScaleAnimations;
+        public List<AlphaAnimation>    AlphaAnimations;
     }
 }

@@ -4,14 +4,17 @@ using System.Threading.Tasks;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
+using Framework.Common;
 using UnityEngine;
 
-namespace Framework.UI
+namespace Framework.ZMUI
 {
     [Serializable]
     public class UIAnimationPlayer
     {
-        [SerializeField] private GameObject _target;
+        [Info("需掛CanvasGroup")]
+        [SerializeField] 
+        private GameObject _target;
 
         private Sequence _sequence;
 

@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace Framework.ZMUI
@@ -9,10 +8,11 @@ namespace Framework.ZMUI
         public Transform            transform            { get; set; }
         public Canvas               Canvas               { get; set; }
         public UIComponentContainer UIComponentContainer { get; set; }
+        public UIAnimationPlayer    UIAnimationPlayer    { get; set; }
+        public UIAnimationClip      ShowAnimationClip    { get; set; }
+        public UIAnimationClip      HideAnimationClip    { get; set; }
         public string               Name                 { get; set; }
-        public bool                 IsVisible            { get; set; }
-        public bool                 IsInStack            { get; set; }
-        public Action<WindowBase>   PopStackListener     { get; set; }
+        public bool                 IsVisible            { get; protected set; }
 
         public virtual void OnLoaded()
         {
@@ -40,7 +40,6 @@ namespace Framework.ZMUI
 
         public virtual void OnPopFromStack()
         {
-            
         }
     }
 }
