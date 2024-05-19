@@ -32,6 +32,7 @@ namespace Framework.ZMUI
         // private Queue<WindowBase> mWindowStack            = new Queue<WindowBase>(); // 队列， 用来管理弹窗的循环弹出
         // private bool              mStartPopStackWndStatus = false; //开始弹出堆栈的表只，可以用来处理多种情况，比如：正在出栈种有其他界面弹出，可以直接放到栈内进行弹出 等
 
+        private Stack<WindowBase> _windowStack = new Stack<WindowBase>();
 
         public void Init()
         {
@@ -182,6 +183,7 @@ namespace Framework.ZMUI
 
             //在出栈的情况下，上一个界面隐藏时，自动打开栈种的下一个界面
             //PopNextStackWindow(window);
+            PopNextWindowFromStack(window);
         }
 
         #endregion
@@ -273,10 +275,10 @@ namespace Framework.ZMUI
         // 顯示最上層 Window的 Mask
         private void RefreshWindowMask()
         {
-            WindowBase maxOrderWindow = null; 
-            var        maxOrder       = 0;    
-            var        maxIndex       = 0;    
-           
+            WindowBase maxOrderWindow = null;
+            var        maxOrder       = 0;
+            var        maxIndex       = 0;
+
             foreach (var window in _visibleWindowList)
             {
                 if (window != null && window.gameObject != null)
@@ -309,6 +311,35 @@ namespace Framework.ZMUI
             {
                 maxOrderWindow.SetMaskVisible(true);
             }
+        }
+
+        #endregion
+
+        #region - Stack -
+
+        public void PushWindowToStack<T>() where T : WindowBase, new()
+        {
+            var window = PopUpWindow<T>();
+            if (_windowStack.TryPeek(out var peekWindow))
+            {
+                _windowStack.Push(window);
+                peekWindow.HideWindow();
+            }
+            else
+            {
+                _windowStack.Push(window);
+            }
+        }
+
+        private void PopNextWindowFromStack(WindowBase windowBase)
+        {
+            if (!_windowStack.TryPeek(out var peekWindow)) return;
+            if (peekWindow != windowBase) return;
+            _windowStack.Pop();
+
+            if (!_windowStack.TryPeek(out peekWindow)) return;
+            peekWindow.OnPopFromStack();
+            ShowLoadedWindow(peekWindow.Name);
         }
 
         #endregion

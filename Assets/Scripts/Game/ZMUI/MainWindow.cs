@@ -20,18 +20,18 @@ namespace Game.ZMUI
         #region - UI Components Fields -
 
         // Start UI Components Fields
-        private Text       TitleText;
-        private Button     CloseButton;
-        private Button     OpenLoginButton;
-        private Button     OpenFriendButton;
-        private Button     OpenInfoButton;
-        private Button     OpenActivityButton;
-        private Button     ChargeButton;
+        private Text TitleText;
+        private Button CloseButton;
+        private Button OpenLoginButton;
+        private Button OpenFriendButton;
+        private Button OpenInfoButton;
+        private Button OpenActivityButton;
+        private Button ChargeButton;
         private GameObject ActivityBannerGameObject;
         private InputField NameInputField;
         private InputField DescriptionInputField;
-        private Toggle     RememberToggle;
-        private Image      CharacterImage;
+        private Toggle RememberToggle;
+        private Image CharacterImage;
         // End UI Components Fields
 
         #endregion
@@ -50,25 +50,25 @@ namespace Game.ZMUI
         private void InitUIComponent()
         {
             // Start InitUIComponent
-            TitleText                = UIComponentContainer[0].GetComponent<Text>();
-            CloseButton              = UIComponentContainer[1].GetComponent<Button>();
-            OpenLoginButton          = UIComponentContainer[2].GetComponent<Button>();
-            OpenFriendButton         = UIComponentContainer[3].GetComponent<Button>();
-            OpenInfoButton           = UIComponentContainer[4].GetComponent<Button>();
-            OpenActivityButton       = UIComponentContainer[5].GetComponent<Button>();
-            ChargeButton             = UIComponentContainer[6].GetComponent<Button>();
+            TitleText = UIComponentContainer[0].GetComponent<Text>();
+            CloseButton = UIComponentContainer[1].GetComponent<Button>();
+            OpenLoginButton = UIComponentContainer[2].GetComponent<Button>();
+            OpenFriendButton = UIComponentContainer[3].GetComponent<Button>();
+            OpenInfoButton = UIComponentContainer[4].GetComponent<Button>();
+            OpenActivityButton = UIComponentContainer[5].GetComponent<Button>();
+            ChargeButton = UIComponentContainer[6].GetComponent<Button>();
             ActivityBannerGameObject = UIComponentContainer[7].gameObject;
-            NameInputField           = UIComponentContainer[8].GetComponent<InputField>();
-            DescriptionInputField    = UIComponentContainer[9].GetComponent<InputField>();
-            RememberToggle           = UIComponentContainer[10].GetComponent<Toggle>();
-            CharacterImage           = UIComponentContainer[11].GetComponent<Image>();
-            AddButtonClickListener(CloseButton,        OnCloseButtonClick);
-            AddButtonClickListener(OpenLoginButton,    OnOpenLoginButtonClick);
-            AddButtonClickListener(OpenFriendButton,   OnOpenFriendButtonClick);
-            AddButtonClickListener(OpenInfoButton,     OnOpenInfoButtonClick);
+            NameInputField = UIComponentContainer[8].GetComponent<InputField>();
+            DescriptionInputField = UIComponentContainer[9].GetComponent<InputField>();
+            RememberToggle = UIComponentContainer[10].GetComponent<Toggle>();
+            CharacterImage = UIComponentContainer[11].GetComponent<Image>();
+            AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            AddButtonClickListener(OpenLoginButton, OnOpenLoginButtonClick);
+            AddButtonClickListener(OpenFriendButton, OnOpenFriendButtonClick);
+            AddButtonClickListener(OpenInfoButton, OnOpenInfoButtonClick);
             AddButtonClickListener(OpenActivityButton, OnOpenActivityButtonClick);
-            AddButtonClickListener(ChargeButton,       OnChargeButtonClick);
-            AddInputFieldListener(NameInputField,        OnNameInputChange,        OnNameInputEnd);
+            AddButtonClickListener(ChargeButton, OnChargeButtonClick);
+            AddInputFieldListener(NameInputField, OnNameInputChange, OnNameInputEnd);
             AddInputFieldListener(DescriptionInputField, OnDescriptionInputChange, OnDescriptionInputEnd);
             AddToggleClickListener(RememberToggle, OnRememberToggleChange);
             // End InitUIComponent

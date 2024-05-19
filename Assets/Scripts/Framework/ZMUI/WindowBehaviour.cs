@@ -11,7 +11,7 @@ namespace Framework.ZMUI
         public UIComponentContainer UIComponentContainer { get; set; }
         public string               Name                 { get; set; }
         public bool                 IsVisible            { get; set; }
-        public bool                 IsPopStack           { get; set; }
+        public bool                 IsInStack            { get; set; }
         public Action<WindowBase>   PopStackListener     { get; set; }
 
         public virtual void OnLoaded()
@@ -36,6 +36,11 @@ namespace Framework.ZMUI
 
         public virtual void SetVisible(bool isVisible)
         {
+        }
+
+        public virtual void OnPopFromStack()
+        {
+            
         }
     }
 }
