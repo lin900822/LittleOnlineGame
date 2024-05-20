@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using DG.Tweening;
 using DG.Tweening.Core;
 using DG.Tweening.Plugins.Options;
-using Framework.Common;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace Framework.UI
@@ -12,7 +12,7 @@ namespace Framework.UI
     [Serializable]
     public class UIAnimationPlayer
     {
-        [Info("注意:Target需掛CanvasGroup")]
+        [InfoBox("Target需掛CanvasGroup")]
         [SerializeField] 
         private GameObject _target;
 
