@@ -40,6 +40,11 @@ namespace Game.UI
             {
                 UIManager.Instance.PopUpWindow<MainWindow>();
             }
+            
+            if (Input.GetKeyDown(KeyCode.G))
+            {
+                UIManager.Instance.PopUpWindow<Window_Lobby>();
+            }
         }
     }
 }
