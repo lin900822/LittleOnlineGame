@@ -9,6 +9,7 @@
 
 using System;
 using System.Threading.Tasks;
+using Common;
 using Framework.UI;
 using UnityEngine;
 using UnityEngine.UI;
@@ -105,7 +106,7 @@ namespace Game.UI
 
         private void OnOpenFriendButtonClick()
         {
-            TestTask();
+            TestTask().Await();
         }
 
         private void OnOpenInfoButtonClick()

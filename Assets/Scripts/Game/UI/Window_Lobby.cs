@@ -86,7 +86,7 @@ namespace Game.UI
 
         private void OnPlayerInfoButtonClick()
         {
-            
+            UIManager.Instance.PopUpWindow<Window_PlayerInfo>();
         }
 
         private void OnAddCoinButtonClick()
@@ -96,12 +96,12 @@ namespace Game.UI
 
         private void OnSettingsButtonClick()
         {
-            
+            UIManager.Instance.PopUpWindow<Window_Settings>();
         }
 
         private void OnGiftButtonClick()
         {
-            
+            UIManager.Instance.PopUpWindow<Window_Gift>();
         }
 
         private void OnPlayButtonClick()
