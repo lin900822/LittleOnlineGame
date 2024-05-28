@@ -22,9 +22,6 @@ namespace Game.UI
         private Text ExpText;
         private Text PlayerLevelText;
         private Text PlayerNameText;
-        private Text CoinAmountText;
-        private Button AddCoinButton;
-        private Button SettingsButton;
         private Button GiftButton;
         private Button AdButton;
         private Button PlayButton;
@@ -48,15 +45,10 @@ namespace Game.UI
             ExpText = UIComponentContainer[2].GetComponent<Text>();
             PlayerLevelText = UIComponentContainer[3].GetComponent<Text>();
             PlayerNameText = UIComponentContainer[4].GetComponent<Text>();
-            CoinAmountText = UIComponentContainer[5].GetComponent<Text>();
-            AddCoinButton = UIComponentContainer[6].GetComponent<Button>();
-            SettingsButton = UIComponentContainer[7].GetComponent<Button>();
-            GiftButton = UIComponentContainer[8].GetComponent<Button>();
-            AdButton = UIComponentContainer[9].GetComponent<Button>();
-            PlayButton = UIComponentContainer[10].GetComponent<Button>();
+            GiftButton = UIComponentContainer[5].GetComponent<Button>();
+            AdButton = UIComponentContainer[6].GetComponent<Button>();
+            PlayButton = UIComponentContainer[7].GetComponent<Button>();
             AddButtonClickListener(PlayerInfoButton, OnPlayerInfoButtonClick);
-            AddButtonClickListener(AddCoinButton, OnAddCoinButtonClick);
-            AddButtonClickListener(SettingsButton, OnSettingsButtonClick);
             AddButtonClickListener(GiftButton, OnGiftButtonClick);
             AddButtonClickListener(AdButton, OnAdButtonClick);
             AddButtonClickListener(PlayButton, OnPlayButtonClick);
@@ -87,16 +79,6 @@ namespace Game.UI
         private void OnPlayerInfoButtonClick()
         {
             UIManager.Instance.PopUpWindow<Window_PlayerInfo>();
-        }
-
-        private void OnAddCoinButtonClick()
-        {
-            
-        }
-
-        private void OnSettingsButtonClick()
-        {
-            UIManager.Instance.PopUpWindow<Window_Settings>();
         }
 
         private void OnGiftButtonClick()

@@ -106,15 +106,15 @@ namespace Framework.UI
 
             if (windowGO != null)
             {
-                windowBase.gameObject           = windowGO;
-                windowBase.transform            = windowGO.transform;
-                windowBase.Canvas               = windowGO.GetComponent<Canvas>();
-                windowBase.UIComponentContainer = windowGO.GetComponent<UIComponentContainer>();
-                windowBase.UIAnimationPlayer    = windowBase.UIComponentContainer.UIAnimationPlayer;
-                windowBase.ShowAnimationClip    = windowBase.UIComponentContainer.ShowAnimationClip;
-                windowBase.HideAnimationClip    = windowBase.UIComponentContainer.HideAnimationClip;
-                windowBase.Name                 = windowGO.name;
-                windowBase.Canvas.worldCamera   = _uiCamera;
+                windowBase.gameObject             = windowGO;
+                windowBase.transform              = windowGO.transform;
+                windowBase.Canvas                 = windowGO.GetComponent<Canvas>();
+                windowBase.UIComponentContainer   = windowGO.GetComponent<UIComponentContainer>();
+                windowBase.UIAnimationPlayer      = windowBase.UIComponentContainer.UIAnimationPlayer;
+                windowBase.ShowAnimationClip      = windowBase.UIComponentContainer.ShowAnimationClip;
+                windowBase.HideAnimationClip      = windowBase.UIComponentContainer.HideAnimationClip;
+                windowBase.Name                   = windowGO.name;
+                windowBase.Canvas.worldCamera     = _uiCamera;
 
                 var rectTrans = windowGO.GetComponent<RectTransform>();
                 rectTrans.anchorMax = Vector2.one;

@@ -44,6 +44,7 @@ namespace Game.UI
             if (Input.GetKeyDown(KeyCode.G))
             {
                 UIManager.Instance.PopUpWindow<Window_Lobby>();
+                UIManager.Instance.PopUpWindow<Window_Function>();
             }
         }
     }
