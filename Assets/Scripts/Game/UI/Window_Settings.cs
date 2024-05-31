@@ -18,6 +18,7 @@ namespace Game.UI
 
         // Start UI Components Fields
         private Button CloseButton;
+        private Button FriendButton;
         // End UI Components Fields
 
         #endregion
@@ -34,7 +35,9 @@ namespace Game.UI
         {
             // Start InitUIComponent
             CloseButton = UIComponentContainer[0].GetComponent<Button>();
+            FriendButton = UIComponentContainer[1].GetComponent<Button>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            AddButtonClickListener(FriendButton, OnFriendButtonClick);
             // End InitUIComponent
         }
 
@@ -62,6 +65,12 @@ namespace Game.UI
         private void OnCloseButtonClick()
         {
             HideWindow();
+        }
+        
+        private void OnFriendButtonClick()
+        {
+            HideWindow();
+            UIManager.Instance.PushWindowToStack<Window_Friend>();
         }
 
         // End UI Component Events

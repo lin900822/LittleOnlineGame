@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Common;
 using UnityEngine;
 
 namespace Framework.UI
@@ -38,7 +39,7 @@ namespace Framework.UI
         #region - PopUp -
 
         /// <summary>
-        /// 弹出一个弹窗
+        /// 顯示一個Window
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -80,11 +81,8 @@ namespace Framework.UI
                 windowBase.OnShow();
                 return windowBase;
             }
-            else
-            {
-                Debug.LogError(windowName + " 窗口不存在，请调用PopUpWindow 进行弹出");
-            }
-
+            
+            Log.Error($"{windowName} 未加載");
             return null;
         }
 
@@ -130,7 +128,7 @@ namespace Framework.UI
                 return windowBase;
             }
 
-            Debug.LogError("没有加载到对应的窗口 窗口名字：" + windowName);
+            Log.Error($"加載{windowName}失敗");
             return null;
         }
 
@@ -196,7 +194,7 @@ namespace Framework.UI
 
             if (_windowStack.Contains(window))
             {
-                Debug.Log("该窗口在栈中，无法销毁");
+                Log.Error($"{window.Name}還在Stack中, 無法釋放");
                 return;
             }
             
@@ -242,7 +240,7 @@ namespace Framework.UI
         }
 
         /// <summary>
-        /// 获取已经弹出的弹窗
+        /// 獲得已顯示的Window
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
@@ -257,7 +255,7 @@ namespace Framework.UI
                 }
             }
 
-            Debug.LogError("该窗口没有获取到：" + type.Name);
+            Log.Error($"找不到{type.Name}");
             return null;
         }
 

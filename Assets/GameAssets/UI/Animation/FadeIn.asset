@@ -10,20 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3aba110ea837484b9c252701fb60b581, type: 3}
-  m_Name: LeftIn
+  m_Name: FadeIn
   m_EditorClassIdentifier: 
-  PositionAnimations:
-  - StartTime: 0
-    EndTime: 0.25
-    Ease: 5
-    AnimationCurve:
-      serializedVersion: 2
-      m_Curve: []
-      m_PreInfinity: 2
-      m_PostInfinity: 2
-      m_RotationOrder: 4
-    StartPosition: {x: -30, y: 0}
-    EndPosition: {x: 0, y: 0}
+  PositionAnimations: []
   RotationAnimations: []
   ScaleAnimations: []
   AlphaAnimations:

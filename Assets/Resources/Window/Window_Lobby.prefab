@@ -281,7 +281,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Marco Wang
+  m_Text: Player Name
 --- !u!1 &2105981659046846117
 GameObject:
   m_ObjectHideFlags: 0

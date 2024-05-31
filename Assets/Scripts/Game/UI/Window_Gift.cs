@@ -18,6 +18,7 @@ namespace Game.UI
 
         // Start UI Components Fields
         private Button CloseButton;
+        private Button BagButton;
         // End UI Components Fields
 
         #endregion
@@ -34,22 +35,20 @@ namespace Game.UI
         {
             // Start InitUIComponent
             CloseButton = UIComponentContainer[0].GetComponent<Button>();
+            BagButton = UIComponentContainer[1].GetComponent<Button>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            AddButtonClickListener(BagButton, OnBagButtonClick);
             // End InitUIComponent
         }
 
         public override void OnShow()
         {
             base.OnShow();
-            UIManager.Instance.HideWindow<Window_Function>();
-            UIManager.Instance.PopUpWindow<Window_Function>();
         }
 
         public override void OnHide()
         {
             base.OnHide();
-            UIManager.Instance.HideWindow<Window_Function>();
-            UIManager.Instance.PopUpWindow<Window_Function>();
         }
 
         public override void OnUnloaded()
@@ -67,7 +66,12 @@ namespace Game.UI
         {
             HideWindow();
         }
-
+        
+        private void OnBagButtonClick()
+        {
+            UIManager.Instance.PushWindowToStack<Window_Bag>();
+        }
+        
         // End UI Component Events
         
         #endregion

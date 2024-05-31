@@ -83,7 +83,7 @@ namespace Game.UI
 
         private void OnGiftButtonClick()
         {
-            UIManager.Instance.PopUpWindow<Window_Gift>();
+            UIManager.Instance.PushWindowToStack<Window_Gift>();
         }
 
         private void OnPlayButtonClick()
