@@ -21,7 +21,7 @@ namespace Framework.UI.Editor
 
         private static Dictionary<string, string> _methodCodeByMethodName = new Dictionary<string, string>();
 
-        [MenuItem("/Assets/UI腳本生成工具/生成Window腳本(Shift+V) #V", false, 0)]
+        [MenuItem("/Assets/UI框架/生成Window腳本(Shift+V) #V", false, 0)]
         private static void CreateFindComponentScripts()
         {
             _uiComponentInfos.Clear();

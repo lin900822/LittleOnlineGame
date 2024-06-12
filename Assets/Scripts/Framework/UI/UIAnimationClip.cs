@@ -42,7 +42,7 @@ namespace Framework.UI
         public float EndAlpha;
     }
     
-    [CreateAssetMenu(fileName = "ViewAnimationClip", menuName = "UIFramework/ViewAnimationClip")]
+    [CreateAssetMenu(fileName = "UIAnimationClip", menuName = "UI框架/UIAnimationClip")]
     public class UIAnimationClip : ScriptableObject
     {
         public List<PositionAnimation> PositionAnimations;

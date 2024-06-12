@@ -24,6 +24,7 @@ namespace Game.UI
         private Text PlayerNameText;
         private Button GiftButton;
         private Button AdButton;
+        private Button TestButton;
         private Button PlayButton;
         // End UI Components Fields
 
@@ -47,10 +48,12 @@ namespace Game.UI
             PlayerNameText = UIComponentContainer[4].GetComponent<Text>();
             GiftButton = UIComponentContainer[5].GetComponent<Button>();
             AdButton = UIComponentContainer[6].GetComponent<Button>();
-            PlayButton = UIComponentContainer[7].GetComponent<Button>();
+            TestButton = UIComponentContainer[7].GetComponent<Button>();
+            PlayButton = UIComponentContainer[8].GetComponent<Button>();
             AddButtonClickListener(PlayerInfoButton, OnPlayerInfoButtonClick);
             AddButtonClickListener(GiftButton, OnGiftButtonClick);
             AddButtonClickListener(AdButton, OnAdButtonClick);
+            AddButtonClickListener(TestButton, OnTestButtonClick);
             AddButtonClickListener(PlayButton, OnPlayButtonClick);
             // End InitUIComponent
         }
@@ -94,7 +97,10 @@ namespace Game.UI
         {
             
         }
-
+        private void OnTestButtonClick()
+        {
+            
+        }
 
         // End UI Component Events
         
