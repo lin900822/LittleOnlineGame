@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Common;
+using Shared.Logger;
 using UnityEngine;
 
 namespace Framework.UI
