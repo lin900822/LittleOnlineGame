@@ -1,4 +1,6 @@
 using System;
+using Framework.UI;
+using Game.UI;
 using Shared.Logger;
 using UnityEngine;
 
@@ -6,33 +8,24 @@ namespace Game
 {
     public class GamePlayApp : MonoBehaviour
     {
-        private NetworkSystem _networkSystem;
-        
         private void Start()
         {
-            _networkSystem = new NetworkSystem();
-            _networkSystem.Init();
-            
-            Log.Info("GamePlay Init");
+            UIManager.Instance.Init();
+            NetworkSystem.Instance.Init();
+
+            UIManager.Instance.PopUpWindow<Window_Login>();
         }
 
         private void Update()
         {
-            _networkSystem.Update();
+            NetworkSystem.Instance.Update();
 
-            if (Input.GetKeyDown(KeyCode.H))
+            if (Input.GetKeyDown(KeyCode.G))
             {
-                _networkSystem.SendHello(new Hello()
+                UIManager.Instance.PopUpWindow<Window_SystemInfo>(new UIData_SystemInfo()
                 {
-                    Content = "Unity Client",
-                });
-            }
-            
-            if (Input.GetKeyDown(KeyCode.M))
-            {
-                _networkSystem.SendMatch(new Match()
-                {
-                    PlayerId = 1120,
+                    Message = "測試!",
+                    IsNeedShowCancelButton = false,
                 });
             }
         }

@@ -18,7 +18,7 @@ namespace Framework.UI
         {
         }
 
-        public virtual void OnShow()
+        public virtual void OnShow(UIData uiData = null)
         {
         }
 

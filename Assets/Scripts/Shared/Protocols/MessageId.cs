@@ -12,15 +12,17 @@
         RawByte   = 14,
         Broadcast = 15,
     
-        // 對Client
+        // C2M
         Register = 101,
         Login = 102,
         Match = 103,
+        C2M_PlayerLoginOrRegister = 104,
     
         ClientMax = 32767,
     
-        // Server內部
+        // M2C
         ServerInfo = 32768,
+        M2C_StateCode = 32769,
     }
 }
 

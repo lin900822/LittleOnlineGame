@@ -36,9 +36,9 @@ namespace Framework.UI
             InitComponent();
         }
 
-        public override void OnShow()
+        public override void OnShow(UIData uiData = null)
         {
-            base.OnShow();
+            base.OnShow(uiData);
             PlayShowAnimation().Await(null,
                 (ex) => { Debug.LogError(ex.ToString()); });
         }

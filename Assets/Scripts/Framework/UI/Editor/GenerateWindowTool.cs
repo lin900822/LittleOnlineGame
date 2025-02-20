@@ -179,9 +179,9 @@ namespace Framework.UI.Editor
             sb.AppendLine("");
 
             // OnShow
-            sb.AppendLine("        public override void OnShow()");
+            sb.AppendLine("        public override void OnShow(UIData uiData = null)");
             sb.AppendLine("        {");
-            sb.AppendLine("            base.OnShow();");
+            sb.AppendLine("            base.OnShow(uiData);");
             sb.AppendLine("        }");
             sb.AppendLine("");
 

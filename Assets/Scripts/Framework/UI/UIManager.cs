@@ -43,28 +43,28 @@ namespace Framework.UI
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        public T PopUpWindow<T>() where T : WindowBase, new()
+        public T PopUpWindow<T>(UIData uiData = null) where T : WindowBase, new()
         {
             var type         = typeof(T);
             var windowName   = type.Name;
             var loadedWindow = GetLoadedWindow(windowName);
             if (loadedWindow != null)
             {
-                return ShowLoadedWindow(windowName) as T;
+                return ShowLoadedWindow(windowName, uiData) as T;
             }
 
             var newWindow = LoadWindow<T>();
             _visibleWindowList.Add(newWindow);
             newWindow.transform.SetAsLastSibling();
             newWindow.SetVisible(true);
-            newWindow.OnShow();
+            newWindow.OnShow(uiData);
 
             RefreshWindowMask();
 
             return newWindow;
         }
 
-        private WindowBase ShowLoadedWindow(string windowName)
+        private WindowBase ShowLoadedWindow(string windowName, UIData uiData = null)
         {
             if (_loadedWindowByName.TryGetValue(windowName, out var windowBase))
             {
@@ -78,7 +78,7 @@ namespace Framework.UI
                 windowBase.SetVisible(true);
                 RefreshWindowMask();
 
-                windowBase.OnShow();
+                windowBase.OnShow(uiData);
                 return windowBase;
             }
             

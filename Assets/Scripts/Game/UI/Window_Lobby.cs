@@ -58,9 +58,9 @@ namespace Game.UI
             // End InitUIComponent
         }
 
-        public override void OnShow()
+        public override void OnShow(UIData uiData = null)
         {
-            base.OnShow();
+            base.OnShow(uiData);
         }
 
         public override void OnHide()

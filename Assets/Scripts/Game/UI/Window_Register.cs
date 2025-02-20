@@ -1,6 +1,6 @@
 /*---------------------------------
  - Title: UI腳本生成工具
- - Created Date: 2024/5/31 上午 10:20:32
+ - Created Date: 2/20/2025 5:19:35 PM
  - 注意事項:
  - 1. 請不要刪除或修改 "// Start XXX" 和 "// End XXX" 等相關的註解, 自動生成器會依賴他們
  - 2. 請不要在 "Start UI Components Fields" 和 "End UI Components Fields" 之間加入新的程式碼
@@ -12,12 +12,16 @@ using Framework.UI;
 
 namespace Game.UI
 {
-    public class Window_Bag : WindowBase
+    public class Window_Register : WindowBase
     {
         #region - UI Components Fields -
 
         // Start UI Components Fields
         private Button CloseButton;
+        private InputField UsernameInputField;
+        private InputField PasswordInputField;
+        private Button BackButton;
+        private Button RegisterButton;
         // End UI Components Fields
 
         #endregion
@@ -34,7 +38,15 @@ namespace Game.UI
         {
             // Start InitUIComponent
             CloseButton = UIComponentContainer[0].GetComponent<Button>();
+            UsernameInputField = UIComponentContainer[1].GetComponent<InputField>();
+            PasswordInputField = UIComponentContainer[2].GetComponent<InputField>();
+            BackButton = UIComponentContainer[3].GetComponent<Button>();
+            RegisterButton = UIComponentContainer[4].GetComponent<Button>();
             AddButtonClickListener(CloseButton, OnCloseButtonClick);
+            AddInputFieldListener(UsernameInputField, OnUsernameInputChange, OnUsernameInputEnd);
+            AddInputFieldListener(PasswordInputField, OnPasswordInputChange, OnPasswordInputEnd);
+            AddButtonClickListener(BackButton, OnBackButtonClick);
+            AddButtonClickListener(RegisterButton, OnRegisterButtonClick);
             // End InitUIComponent
         }
 
@@ -62,6 +74,44 @@ namespace Game.UI
         private void OnCloseButtonClick()
         {
             HideWindow();
+        }
+
+        private void OnUsernameInputChange(string text)
+        {
+            
+        }
+
+        private void OnUsernameInputEnd(string text)
+        {
+            
+        }
+
+        private void OnPasswordInputChange(string text)
+        {
+            
+        }
+
+        private void OnPasswordInputEnd(string text)
+        {
+            
+        }
+
+        private void OnBackButtonClick()
+        {
+            HideWindow();
+        }
+
+        private void OnRegisterButtonClick()
+        {
+            var username = UsernameInputField.text;
+            var password = PasswordInputField.text;
+            
+            NetworkSystem.Instance.SendLogin(new C2M_PlayerLoginOrRegister()
+            {
+                Username = username,
+                Password = password,
+                IsLogin = false,
+            });
         }
 
         // End UI Component Events
