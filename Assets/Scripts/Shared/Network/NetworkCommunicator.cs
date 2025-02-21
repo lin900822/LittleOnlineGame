@@ -11,12 +11,17 @@ namespace Shared.Network
     {
         private bool _isNeedCheckOverReceived = false;
 
-        private bool _isClosing = false;
+        public bool IsSending { get; private set; }
 
-        public Socket Socket { get; private set; }
+        /// <summary>
+        /// 由外部透過Init()設置 此物件不會new Socket
+        /// 關閉Socket也是外部去關
+        /// 此物件有點像只是Socket的載體 而不 has a Socket
+        /// </summary>
+        public Socket Socket { get; private set; }  
 
         public Action<NetworkCommunicator, ReceivedMessageInfo> OnReceivedMessage;
-        public Action<NetworkCommunicator> OnClose;
+        public Action<NetworkCommunicator> OnClosed;
 
         private readonly ByteBuffer _receiveBuffer;
         private readonly Queue<ByteBuffer> _sendQueue;
@@ -75,8 +80,6 @@ namespace Shared.Network
             _sendArgs.AcceptSocket = null;
 
             _isNeedCheckOverReceived = false;
-
-            _isClosing = false;
 
             lock (_receiveBuffer)
             {
@@ -148,7 +151,7 @@ namespace Shared.Network
             if (!IsSocketValid() || !ReadDataToReceiveBuffer(args))
             {
                 // 收到 0個 Byte代表 Client已關閉
-                Close();
+                CloseCommunicator();
                 return;
             }
 
@@ -185,7 +188,7 @@ namespace Shared.Network
                 if (IsOverReceived())
                 {
                     Log.Warn($"{Socket.RemoteEndPoint.ToString()} Sent Too Much Packets.");
-                    Close();
+                    CloseCommunicator();
                     return;
                 }
             }
@@ -204,7 +207,7 @@ namespace Shared.Network
         #endregion
 
         #region - Send -
-
+        
         public void Send(ushort messageId, byte[] message, bool isRequest = false, ushort requestId = 0)
         {
             if (!IsSocketValid())
@@ -254,6 +257,7 @@ namespace Shared.Network
             // SendQueue.Count > 1時, 在 OnSend()裡面會持續發送, 直到發送完
             if (count == 1)
             {
+                IsSending = true;
                 var copyCount = Math.Min(byteBuffer.Length, NetworkConfig.BufferSize);
                 _sendArgs.SetBuffer(_sendArgs.Offset, copyCount);
                 Array.Copy(byteBuffer.RawData, byteBuffer.ReadIndex, _sendArgs.Buffer, _sendArgs.Offset, copyCount);
@@ -267,6 +271,7 @@ namespace Shared.Network
             {
                 if (!IsSocketValid())
                 {
+                    IsSending = false;
                     return;
                 }
 
@@ -277,6 +282,7 @@ namespace Shared.Network
             }
             catch (Exception e)
             {
+                IsSending = false;
                 Log.Error(e.ToString());
             }
         }
@@ -285,11 +291,13 @@ namespace Shared.Network
         {
             if (!IsSocketValid())
             {
+                IsSending = false;
                 return;
             }
 
             if (args.SocketError != SocketError.Success)
             {
+                IsSending = false;
                 return;
             }
 
@@ -300,6 +308,7 @@ namespace Shared.Network
         {
             if (_sendQueue.Count <= 0)
             {
+                IsSending = false;
                 return;
             }
 
@@ -341,17 +350,16 @@ namespace Shared.Network
                 Array.Copy(byteBuffer.RawData, byteBuffer.ReadIndex, _sendArgs.Buffer, _sendArgs.Offset, copyCount);
                 SendAsync();
             }
+            else
+            {
+                IsSending = false;
+            }
         }
 
         #endregion
 
         private bool IsSocketValid()
         {
-            if (_isClosing)
-            {
-                return false;
-            }
-
             if (Socket == null)
             {
                 return false;
@@ -362,10 +370,17 @@ namespace Shared.Network
 
         #region - Close -
 
-        private void Close()
+        /// <summary>
+        /// 僅關閉此 Communicator。
+        /// Socket由外部接受到此Communicator的關閉事件通知之後關閉
+        /// 會關閉Communicator的情況:
+        /// 1. 使用者主動Call CloseCommunicator關閉
+        /// 2. 當Socket收到 0個 Byte 自動Call CloseCommunicator關閉
+        /// 3. 某Client送太多封包 自動Call CloseCommunicator關閉
+        /// </summary>
+        public void CloseCommunicator()
         {
-            OnClose?.Invoke(this);
-            _isClosing = true;
+            OnClosed?.Invoke(this);
         }
 
         #endregion

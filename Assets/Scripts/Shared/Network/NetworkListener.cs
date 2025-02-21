@@ -102,12 +102,18 @@ namespace Shared.Network
 
             lock (_communicatorsToClose)
             {
-                foreach (var communicator in _communicatorsToClose)
+                for (int i = 0; i < _communicatorsToClose.Count; i++)
                 {
-                    InnerClose(communicator.Socket);
+                    var communicator = _communicatorsToClose.Dequeue();
+                    if (communicator.IsSending)
+                    {
+                        _communicatorsToClose.Enqueue(communicator);
+                    }
+                    else
+                    {
+                        ReleaseCommunicatorAndCloseSocket(communicator.Socket);
+                    }
                 }
-
-                _communicatorsToClose.Clear();
             }
         }
 
@@ -165,7 +171,7 @@ namespace Shared.Network
             {
                 communicator.Init(clientFd, _isNeedCheckOverReceived);
                 communicator.OnReceivedMessage += HandleReceivedMessage;
-                communicator.OnClose += OnCommunicatorClose;
+                communicator.OnClosed += HandleCommunicatorClosed;
 
                 lock (_communicatorsToAdd)
                 {
@@ -187,9 +193,9 @@ namespace Shared.Network
             OnReceivedMessage?.Invoke(communicator, receivedMessageInfo);
         }
 
-        private void OnCommunicatorClose(NetworkCommunicator communicator)
+        private void HandleCommunicatorClosed(NetworkCommunicator communicator)
         {
-            Close(communicator);
+            AddCommunicatorToCloseQueue(communicator);
         }
 
         #endregion
@@ -223,7 +229,7 @@ namespace Shared.Network
 
         #region - Close -
 
-        public void Close(NetworkCommunicator communicator)
+        private void AddCommunicatorToCloseQueue(NetworkCommunicator communicator)
         {
             if (communicator == null)
                 return;
@@ -234,7 +240,7 @@ namespace Shared.Network
             }
         }
 
-        private void InnerClose(Socket socket)
+        private void ReleaseCommunicatorAndCloseSocket(Socket socket)
         {
             if (socket == null) return;
 
@@ -252,21 +258,20 @@ namespace Shared.Network
             void RemoveFromCommunicatorList()
             {
                 OnCommunicatorDisconnected?.Invoke(communicator);
-                if (_communicatorList.ContainsKey(socket)) _communicatorList.Remove(socket);
+                if (_communicatorList.ContainsKey(socket)) 
+                    _communicatorList.Remove(socket);
             }
 
             void ReturnCommunicator()
             {
                 communicator.OnReceivedMessage -= HandleReceivedMessage;
-                communicator.OnClose -= OnCommunicatorClose;
+                communicator.OnClosed -= HandleCommunicatorClosed;
                 _communicatorPool.Return(communicator);
             }
 
             void CloseConnection()
             {
-                var socketEndPointStr = socket.RemoteEndPoint?.ToString();
                 CloseSocket(socket);
-                //Log.Info($"{socketEndPointStr} Closed!");
             }
         }
 

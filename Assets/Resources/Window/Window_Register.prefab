@@ -1614,7 +1614,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIAnimationPlayer:
-    _target: {fileID: 0}
+    _target: {fileID: 353031908150623986}
   ShowAnimationClip: {fileID: 11400000, guid: b97a2323d6c85194da6488e242ea4b8d, type: 2}
   HideAnimationClip: {fileID: 11400000, guid: a161cb8271038044cae8d4d920968b28, type: 2}
   UIComponents:

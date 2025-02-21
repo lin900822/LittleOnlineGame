@@ -13,6 +13,7 @@ namespace Game
             UIManager.Instance.Init();
             NetworkSystem.Instance.Init();
 
+            UIManager.Instance.PopUpWindow<Window_Init>();
             UIManager.Instance.PopUpWindow<Window_Login>();
         }
 
@@ -28,6 +29,11 @@ namespace Game
                     IsNeedShowCancelButton = false,
                 });
             }
+        }
+
+        private void OnApplicationQuit()
+        {
+            NetworkSystem.Instance.Close();
         }
     }
 }

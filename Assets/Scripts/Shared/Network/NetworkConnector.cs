@@ -48,7 +48,7 @@ namespace Shared.Network
                 Log.Info("Connected!");
 
                 _communicator.OnReceivedMessage += OnReceivedMessage;
-                _communicator.OnClose += OnCommunicatorClose;
+                _communicator.OnClosed += HandleCommunicatorClose;
 
                 _communicator.Init(_connectFd);
                 _communicator.ReceiveAsync();
@@ -81,17 +81,22 @@ namespace Shared.Network
             _communicator.Send(messageId, message, isRequest, requestId);
         }
 
-        private void OnCommunicatorClose(NetworkCommunicator communicator)
+        public void Close()
+        {
+            _communicator.CloseCommunicator();
+        }
+
+        private void HandleCommunicatorClose(NetworkCommunicator communicator)
         {
             _communicator.OnReceivedMessage -= OnReceivedMessage;
-            _communicator.OnClose -= OnCommunicatorClose;
+            _communicator.OnClosed -= HandleCommunicatorClose;
 
             ConnectState = ConnectState.Disconnected;
 
-            Close();
+            CloseSocket();
         }
 
-        private void Close()
+        private void CloseSocket()
         {
             OnClosed?.Invoke(_connectFd);
 

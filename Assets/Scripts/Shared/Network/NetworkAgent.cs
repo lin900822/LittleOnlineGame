@@ -324,6 +324,11 @@ namespace Shared.Network
             }
         }
 
+        public void Close()
+        {
+            _connector.Close();
+        }
+
         #endregion
     }
 }

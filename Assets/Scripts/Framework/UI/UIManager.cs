@@ -159,6 +159,14 @@ namespace Framework.UI
             HideWindow(window);
         }
 
+        public void HideAllWindows()
+        {
+            foreach (var entry in _loadedWindowByName)
+            {
+                HideWindow(entry.Value);
+            }
+        }
+
         private void HideWindow(WindowBase window)
         {
             if (window != null && window.IsVisible)
