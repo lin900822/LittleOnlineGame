@@ -4,25 +4,25 @@ namespace Shared.Network
 {
     public class NetworkCommunicatorPool
     {
-        private ConcurrentStack<NetworkCommunicator> _communicatorStack;
+        private ConcurrentQueue<NetworkCommunicator> _communicatorQueue;
 
         public NetworkCommunicatorPool(int maxConnectionCount)
         {
             var bufferSize = NetworkConfig.BufferSize;
 
-            _communicatorStack = new ConcurrentStack<NetworkCommunicator>();
+            _communicatorQueue = new ConcurrentQueue<NetworkCommunicator>();
 
             for (int i = 0; i < maxConnectionCount; i++)
             {
                 var communicator = new NetworkCommunicator(bufferSize);
 
-                _communicatorStack.Push(communicator);
+                _communicatorQueue.Enqueue(communicator);
             }
         }
 
         public NetworkCommunicator Rent()
         {
-            if (_communicatorStack.TryPop(out var communicator)) return communicator;
+            if (_communicatorQueue.TryDequeue(out var communicator)) return communicator;
 
             return null;
         }
@@ -30,7 +30,7 @@ namespace Shared.Network
         public void Return(NetworkCommunicator communicator)
         {
             communicator.Release();
-            _communicatorStack.Push(communicator);
+            _communicatorQueue.Enqueue(communicator);
         }
     }
 }

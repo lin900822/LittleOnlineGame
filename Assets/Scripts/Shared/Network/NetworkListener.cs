@@ -13,7 +13,7 @@ namespace Shared.Network
 
         public Action<NetworkCommunicator, ReceivedMessageInfo> OnReceivedMessage;
 
-        public int ConnectionCount => _communicatorList.Count;
+        public int ConnectionCount => _socketToCommunicators.Count;
 
         // Variables
         private Socket _listenFd;
@@ -24,9 +24,9 @@ namespace Shared.Network
         private readonly Queue<NetworkCommunicator> _communicatorsToAdd;
         private readonly Queue<NetworkCommunicator> _communicatorsToClose;
 
-        public Dictionary<Socket, NetworkCommunicator> CommunicatorList => _communicatorList;
+        public Dictionary<Socket, NetworkCommunicator> SocketToCommunicators => _socketToCommunicators;
 
-        private readonly Dictionary<Socket, NetworkCommunicator> _communicatorList;
+        private readonly Dictionary<Socket, NetworkCommunicator> _socketToCommunicators;
 
         private readonly NetworkCommunicatorPool _communicatorPool;
 
@@ -40,7 +40,7 @@ namespace Shared.Network
             _communicatorsToClose = new Queue<NetworkCommunicator>();
 
             _communicatorPool = new NetworkCommunicatorPool(_maxConnectionCount);
-            _communicatorList = new Dictionary<Socket, NetworkCommunicator>();
+            _socketToCommunicators = new Dictionary<Socket, NetworkCommunicator>();
         }
 
         public void Listen(string ip, int port)
@@ -81,7 +81,7 @@ namespace Shared.Network
             {
                 foreach (var communicator in _communicatorsToAdd)
                 {
-                    _communicatorList.Add(communicator.Socket, communicator);
+                    _socketToCommunicators.Add(communicator.Socket, communicator);
 
                     OnCommunicatorConnected?.Invoke(communicator);
 
@@ -122,7 +122,7 @@ namespace Shared.Network
         /// </summary>
         public void HandleMessages()
         {
-            foreach (var communicator in CommunicatorList.Values)
+            foreach (var communicator in SocketToCommunicators.Values)
             {
                 communicator.HandleMessages();
             }
@@ -204,9 +204,9 @@ namespace Shared.Network
 
         public void SendAll(ushort messageId, byte[] message)
         {
-            lock (_communicatorList)
+            lock (_socketToCommunicators)
             {
-                using var enumerator = _communicatorList.GetEnumerator();
+                using var enumerator = _socketToCommunicators.GetEnumerator();
                 while (enumerator.MoveNext())
                 {
                     Send(enumerator.Current.Value, messageId, message);
@@ -244,7 +244,7 @@ namespace Shared.Network
         {
             if (socket == null) return;
 
-            if (!_communicatorList.TryGetValue(socket, out var communicator))
+            if (!_socketToCommunicators.TryGetValue(socket, out var communicator))
             {
                 Log.Error($"Close Socket Error: Cannot find communicator");
                 return;
@@ -258,8 +258,8 @@ namespace Shared.Network
             void RemoveFromCommunicatorList()
             {
                 OnCommunicatorDisconnected?.Invoke(communicator);
-                if (_communicatorList.ContainsKey(socket)) 
-                    _communicatorList.Remove(socket);
+                if (_socketToCommunicators.ContainsKey(socket)) 
+                    _socketToCommunicators.Remove(socket);
             }
 
             void ReturnCommunicator()

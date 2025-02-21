@@ -9,6 +9,8 @@
 using UnityEngine.UI;
 using UnityEngine;
 using Framework.UI;
+using Shared;
+using Shared.Network;
 
 namespace Game.UI
 {
@@ -105,13 +107,16 @@ namespace Game.UI
         {
             var username = UsernameInputField.text;
             var password = PasswordInputField.text;
-            
-            NetworkSystem.Instance.SendLogin(new C2M_PlayerLoginOrRegister()
+
+            var playerData = new C2M_PlayerLoginOrRegister()
             {
                 Username = username,
                 Password = password,
                 IsLogin = false,
-            });
+            };
+            var bytes = ProtoUtils.Encode(playerData);
+            
+            NetworkSystem.Instance.SendMessage((ushort)MessageId.C2M_PlayerLoginOrRegister, bytes);
         }
 
         // End UI Component Events

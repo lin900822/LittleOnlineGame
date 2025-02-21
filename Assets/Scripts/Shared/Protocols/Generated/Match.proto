@@ -1,5 +1,0 @@
-syntax = "proto3";
-
-message Match {
-  int32 player_id = 1;
-}

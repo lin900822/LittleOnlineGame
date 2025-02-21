@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+message M2C_LoginSync {
+  uint32 player_id = 1;
+  string username = 2;
+  uint32 coins = 3;
+}

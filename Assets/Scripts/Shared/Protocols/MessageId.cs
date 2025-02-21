@@ -13,6 +13,7 @@
         Broadcast = 15,
     
         // C2M
+        Debug = 100,
         Register = 101,
         Login = 102,
         Match = 103,
@@ -23,6 +24,7 @@
         // M2C
         ServerInfo = 32768,
         M2C_StateCode = 32769,
+        M2C_LoginSync = 32770,
     }
 }
 
