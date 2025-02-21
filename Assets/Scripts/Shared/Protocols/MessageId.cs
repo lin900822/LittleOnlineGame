@@ -18,6 +18,8 @@
         Login = 102,
         Match = 103,
         C2M_PlayerLoginOrRegister = 104,
+        C2M_JoinMatchQueue = 105,
+        C2M_CancelJoinMatchQueue = 106,
     
         ClientMax = 32767,
     

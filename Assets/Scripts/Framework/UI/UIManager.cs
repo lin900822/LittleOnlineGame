@@ -341,5 +341,17 @@ namespace Framework.UI
         }
 
         #endregion
+
+        #region - Life Cycle -
+
+        public void Update()
+        {
+            foreach (var windowBase in _visibleWindowList)
+            {
+                windowBase.OnUpdate();
+            }
+        }
+
+        #endregion
     }
 }

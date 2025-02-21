@@ -44,6 +44,7 @@ namespace Game
                 return;
             
             NetworkSystem.Instance.Update();
+            UIManager.Instance.Update();
             
             foreach (var serviceBase in _services)
             {

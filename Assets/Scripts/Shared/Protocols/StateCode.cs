@@ -11,5 +11,7 @@
         Register_Success = 106,
         Another_User_LoggedIn = 107,
         TimeOut = 108,
+        JoinMatchQueue_Failed_AlreadyIn = 109,
+        CancelJoinMatchQueue_Failed_NOtIn = 110,
     }
 }
