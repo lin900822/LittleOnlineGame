@@ -13,7 +13,7 @@ namespace Shared.Network
         public ReceivedMessageInfo ReceivedMessageInfo;
         public uint MessageId;
         public ushort RequestId;
-        public Action<ReceivedMessageInfo> OnCompleted;
+        public Action<ByteBuffer> OnCompleted;
         public Action OnTimeOut;
         public long RequestTime;
         public bool IsCompleted;
@@ -78,7 +78,7 @@ namespace Shared.Network
 
             if (_responseQueue.TryDequeue(out var requestPack))
             {
-                requestPack.OnCompleted?.Invoke(requestPack.ReceivedMessageInfo);
+                requestPack.OnCompleted?.Invoke(requestPack.ReceivedMessageInfo.Message);
                 requestPack.IsCompleted = true;
                 requestPack.ReceivedMessageInfo.Release();
             }
@@ -230,10 +230,10 @@ namespace Shared.Network
             _connector.Send(messageId, message);
         }
 
-        public Task<ReceivedMessageInfo> SendRequest(ushort messageId, byte[] request, Action onTimeOut = null)
+        public Task<ByteBuffer> SendRequest(ushort messageId, byte[] request, Action onTimeOut = null)
         {
             var taskCompletionSource =
-                new TaskCompletionSource<ReceivedMessageInfo>(TaskCreationOptions.RunContinuationsAsynchronously);
+                new TaskCompletionSource<ByteBuffer>(TaskCreationOptions.RunContinuationsAsynchronously);
             try
             {
                 SendRequest(messageId, request,
@@ -258,10 +258,10 @@ namespace Shared.Network
             return taskCompletionSource.Task;
         }
 
-        public Task<ReceivedMessageInfo> SendRequest(ushort messageId, ByteBuffer request, Action onTimeOut = null)
+        public Task<ByteBuffer> SendRequest(ushort messageId, ByteBuffer request, Action onTimeOut = null)
         {
             var taskCompletionSource =
-                new TaskCompletionSource<ReceivedMessageInfo>(TaskCreationOptions.RunContinuationsAsynchronously);
+                new TaskCompletionSource<ByteBuffer>(TaskCreationOptions.RunContinuationsAsynchronously);
             try
             {
                 SendRequest(messageId, request,
@@ -286,7 +286,7 @@ namespace Shared.Network
             return taskCompletionSource.Task;
         }
 
-        public void SendRequest(ushort messageId, byte[] request, Action<ReceivedMessageInfo> onCompleted,
+        public void SendRequest(ushort messageId, byte[] request, Action<ByteBuffer> onCompleted,
             Action onTimeOut = null)
         {
             if (_connector.ConnectState != ConnectState.Connected) return;
@@ -296,7 +296,7 @@ namespace Shared.Network
             _connector.Send(messageId, request, true, _requestSerialId);
         }
 
-        public void SendRequest(ushort messageId, ByteBuffer request, Action<ReceivedMessageInfo> onCompleted,
+        public void SendRequest(ushort messageId, ByteBuffer request, Action<ByteBuffer> onCompleted,
             Action onTimeOut = null)
         {
             if (_connector.ConnectState != ConnectState.Connected) return;
@@ -306,7 +306,7 @@ namespace Shared.Network
             _connector.Send(messageId, request, true, _requestSerialId);
         }
 
-        private void AddRequest(ushort messageId, Action<ReceivedMessageInfo> onCompleted, Action onTimeOut)
+        private void AddRequest(ushort messageId, Action<ByteBuffer> onCompleted, Action onTimeOut)
         {
             lock (this)
             {
