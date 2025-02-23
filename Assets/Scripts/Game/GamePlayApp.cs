@@ -26,6 +26,7 @@ namespace Game
             _services = new List<ServiceBase>();
             _services.Add(new SystemService());
             _services.Add(new PlayerService());
+            _services.Add(new BattleService());
 
             foreach (var serviceBase in _services)
             {

@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+message C2B_JoinRoom {
+  uint32 player_id = 1;
+  string key_to_enter_room = 2;
+}

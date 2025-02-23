@@ -12,7 +12,7 @@
         RawByte   = 14,
         Broadcast = 15,
     
-        // C2M
+        // Client To Main
         Debug = 100,
         Register = 101,
         Login = 102,
@@ -21,12 +21,32 @@
         C2M_JoinMatchQueue = 105,
         C2M_CancelJoinMatchQueue = 106,
     
+        // Main To Client
+        M2C_StateCode = 16384,
+        M2C_LoginSync = 16385,
+        M2C_RoomMatched = 16386,
+        
+        // Client To Battle
+        C2B_JoinRoom = 20001,
+        
+        // Battle To Client
+        B2C_Test = 21001,
+
         ClientMax = 32767,
-    
-        // M2C
+        
+#if !UNITY_CLIENT
+        // Server 內部
         ServerInfo = 32768,
-        M2C_StateCode = 32769,
-        M2C_LoginSync = 32770,
+        
+        // Main To Battle
+        M2B_HandShake = 33000,
+        M2B_CreateRoom = 33001,
+    
+        // Battle To Main
+        B2M_RoomCreated = 34001,
+        
+        ServerMax = 65535, 
+#endif
     }
 }
 

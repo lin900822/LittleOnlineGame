@@ -313,6 +313,14 @@ namespace Shared.Network
                 ++_requestSerialId;
             }
 
+            if (onTimeOut == null)
+            {
+                onTimeOut = () =>
+                {
+                    Log.Warn($"MessageID: {messageId} request Timeout!");
+                };
+            }
+
             var requestPack = _requestPool.Rent();
             requestPack.MessageId = messageId;
             requestPack.RequestId = _requestSerialId;

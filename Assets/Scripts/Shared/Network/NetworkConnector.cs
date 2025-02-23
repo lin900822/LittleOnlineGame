@@ -34,7 +34,7 @@ namespace Shared.Network
             try
             {
                 _connectFd = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                Log.Info($"Start Connecting to {ip}...");
+                Log.Info($"Start Connecting to {ip}:{port}...");
 
                 await _connectFd.ConnectAsync(ipEndPoint);
 
