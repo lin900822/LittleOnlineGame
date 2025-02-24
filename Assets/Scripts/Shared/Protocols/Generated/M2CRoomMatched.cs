@@ -22,13 +22,14 @@ public static partial class M2CRoomMatchedReflection {
   static M2CRoomMatchedReflection() {
     byte[] descriptorData = global::System.Convert.FromBase64String(
         string.Concat(
-          "ChVNMkNfUm9vbU1hdGNoZWQucHJvdG8iRgoPTTJDX1Jvb21NYXRjaGVkEhkK",
+          "ChVNMkNfUm9vbU1hdGNoZWQucHJvdG8icgoPTTJDX1Jvb21NYXRjaGVkEhkK",
           "EWtleV90b19lbnRlcl9yb29tGAEgASgJEgoKAmlwGAIgASgJEgwKBHBvcnQY",
-          "AyABKAViBnByb3RvMw=="));
+          "AyABKAUSFAoMcGxheWVyMV9uYW1lGAQgASgJEhQKDHBsYXllcjJfbmFtZRgF",
+          "IAEoCWIGcHJvdG8z"));
     descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
         new pbr::FileDescriptor[] { },
         new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-          new pbr::GeneratedClrTypeInfo(typeof(global::M2C_RoomMatched), global::M2C_RoomMatched.Parser, new[]{ "KeyToEnterRoom", "Ip", "Port" }, null, null, null, null)
+          new pbr::GeneratedClrTypeInfo(typeof(global::M2C_RoomMatched), global::M2C_RoomMatched.Parser, new[]{ "KeyToEnterRoom", "Ip", "Port", "Player1Name", "Player2Name" }, null, null, null, null)
         }));
   }
   #endregion
@@ -73,6 +74,8 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     keyToEnterRoom_ = other.keyToEnterRoom_;
     ip_ = other.ip_;
     port_ = other.port_;
+    player1Name_ = other.player1Name_;
+    player2Name_ = other.player2Name_;
     _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
   }
 
@@ -118,6 +121,30 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     }
   }
 
+  /// <summary>Field number for the "player1_name" field.</summary>
+  public const int Player1NameFieldNumber = 4;
+  private string player1Name_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Player1Name {
+    get { return player1Name_; }
+    set {
+      player1Name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
+  /// <summary>Field number for the "player2_name" field.</summary>
+  public const int Player2NameFieldNumber = 5;
+  private string player2Name_ = "";
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+  [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
+  public string Player2Name {
+    get { return player2Name_; }
+    set {
+      player2Name_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
+    }
+  }
+
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
   [global::System.CodeDom.Compiler.GeneratedCode("protoc", null)]
   public override bool Equals(object other) {
@@ -136,6 +163,8 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     if (KeyToEnterRoom != other.KeyToEnterRoom) return false;
     if (Ip != other.Ip) return false;
     if (Port != other.Port) return false;
+    if (Player1Name != other.Player1Name) return false;
+    if (Player2Name != other.Player2Name) return false;
     return Equals(_unknownFields, other._unknownFields);
   }
 
@@ -146,6 +175,8 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     if (KeyToEnterRoom.Length != 0) hash ^= KeyToEnterRoom.GetHashCode();
     if (Ip.Length != 0) hash ^= Ip.GetHashCode();
     if (Port != 0) hash ^= Port.GetHashCode();
+    if (Player1Name.Length != 0) hash ^= Player1Name.GetHashCode();
+    if (Player2Name.Length != 0) hash ^= Player2Name.GetHashCode();
     if (_unknownFields != null) {
       hash ^= _unknownFields.GetHashCode();
     }
@@ -176,6 +207,14 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
       output.WriteRawTag(24);
       output.WriteInt32(Port);
     }
+    if (Player1Name.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(Player1Name);
+    }
+    if (Player2Name.Length != 0) {
+      output.WriteRawTag(42);
+      output.WriteString(Player2Name);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(output);
     }
@@ -198,6 +237,14 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
       output.WriteRawTag(24);
       output.WriteInt32(Port);
     }
+    if (Player1Name.Length != 0) {
+      output.WriteRawTag(34);
+      output.WriteString(Player1Name);
+    }
+    if (Player2Name.Length != 0) {
+      output.WriteRawTag(42);
+      output.WriteString(Player2Name);
+    }
     if (_unknownFields != null) {
       _unknownFields.WriteTo(ref output);
     }
@@ -216,6 +263,12 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     }
     if (Port != 0) {
       size += 1 + pb::CodedOutputStream.ComputeInt32Size(Port);
+    }
+    if (Player1Name.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Player1Name);
+    }
+    if (Player2Name.Length != 0) {
+      size += 1 + pb::CodedOutputStream.ComputeStringSize(Player2Name);
     }
     if (_unknownFields != null) {
       size += _unknownFields.CalculateSize();
@@ -237,6 +290,12 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
     }
     if (other.Port != 0) {
       Port = other.Port;
+    }
+    if (other.Player1Name.Length != 0) {
+      Player1Name = other.Player1Name;
+    }
+    if (other.Player2Name.Length != 0) {
+      Player2Name = other.Player2Name;
     }
     _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
   }
@@ -269,6 +328,14 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
           Port = input.ReadInt32();
           break;
         }
+        case 34: {
+          Player1Name = input.ReadString();
+          break;
+        }
+        case 42: {
+          Player2Name = input.ReadString();
+          break;
+        }
       }
     }
   #endif
@@ -298,6 +365,14 @@ public sealed partial class M2C_RoomMatched : pb::IMessage<M2C_RoomMatched>
         }
         case 24: {
           Port = input.ReadInt32();
+          break;
+        }
+        case 34: {
+          Player1Name = input.ReadString();
+          break;
+        }
+        case 42: {
+          Player2Name = input.ReadString();
           break;
         }
       }

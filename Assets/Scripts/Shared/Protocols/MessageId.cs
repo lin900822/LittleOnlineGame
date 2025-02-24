@@ -28,9 +28,11 @@
         
         // Client To Battle
         C2B_JoinRoom = 20001,
+        C2B_Input = 20002,
         
         // Battle To Client
-        B2C_Test = 21001,
+        B2C_BattleStart = 21001,
+        B2C_SyncState = 21002,
 
         ClientMax = 32767,
         

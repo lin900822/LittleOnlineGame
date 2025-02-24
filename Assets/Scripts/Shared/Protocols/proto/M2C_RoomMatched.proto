@@ -4,4 +4,6 @@ message M2C_RoomMatched {
   string key_to_enter_room = 1;
   string ip = 2;
   int32 port = 3;
+  string player1_name = 4;
+  string player2_name = 5;
 }

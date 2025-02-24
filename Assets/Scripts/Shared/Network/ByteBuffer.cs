@@ -4,7 +4,6 @@ using Shared.Logger;
 
 namespace Shared.Network
 {
-
     public class ByteBuffer
     {
         // Define
@@ -12,13 +11,13 @@ namespace Shared.Network
 
         // Properties
         public bool IsInPool { get; set; }
-        public int  Remain   => _capacity - _writeIndex;
-        public int  Length   => _writeIndex - _readIndex;
-        public int  Capacity => _capacity;
+        public int Remain => _capacity - _writeIndex;
+        public int Length => _writeIndex - _readIndex;
+        public int Capacity => _capacity;
 
-        public byte[] RawData    => _rawData;
-        public int    ReadIndex  => _readIndex;
-        public int    WriteIndex => _writeIndex;
+        public byte[] RawData => _rawData;
+        public int ReadIndex => _readIndex;
+        public int WriteIndex => _writeIndex;
 
         // Private Variables
         private byte[] _rawData;
@@ -32,14 +31,14 @@ namespace Shared.Network
         // Methods
         public ByteBuffer(int size = DEFAULT_SIZE)
         {
-            _rawData    = new byte[size];
-            _capacity   = size;
-            _initSize   = size;
-            _readIndex  = 0;
+            _rawData = new byte[size];
+            _capacity = size;
+            _initSize = size;
+            _readIndex = 0;
             _writeIndex = 0;
         }
 
-        public void SetReadIndex(int  value) => _readIndex = value;
+        public void SetReadIndex(int value) => _readIndex = value;
         public void SetWriteIndex(int value) => _writeIndex = value;
 
         // 擴充容量
@@ -61,7 +60,7 @@ namespace Shared.Network
             _rawData = newData;
 
             _writeIndex = Length;
-            _readIndex  = 0;
+            _readIndex = 0;
         }
 
         // 檢查與複用byte空間
@@ -80,7 +79,7 @@ namespace Shared.Network
 
             // 這裡順序要注意不能相反
             _writeIndex = Length;
-            _readIndex  = 0;
+            _readIndex = 0;
         }
 
         // 寫入資料
@@ -117,7 +116,7 @@ namespace Shared.Network
             if (Remain < 2) ReuseCapacity();
             if (Remain < 2) Resize(Length + 2);
 
-            _rawData[_writeIndex]     = (byte)(value & 0xFF);
+            _rawData[_writeIndex] = (byte)(value & 0xFF);
             _rawData[_writeIndex + 1] = (byte)((value >> 8) & 0xFF);
 
             _writeIndex += 2;
@@ -129,7 +128,21 @@ namespace Shared.Network
             if (Remain < 4) ReuseCapacity();
             if (Remain < 4) Resize(Length + 4);
 
-            _rawData[_writeIndex]     = (byte)(value & 0xFF);
+            _rawData[_writeIndex] = (byte)(value & 0xFF);
+            _rawData[_writeIndex + 1] = (byte)((value >> 8) & 0xFF);
+            _rawData[_writeIndex + 2] = (byte)((value >> 16) & 0xFF);
+            _rawData[_writeIndex + 3] = (byte)((value >> 24) & 0xFF);
+
+            _writeIndex += 4;
+        }
+
+        // 寫入Int32
+        public void WriteInt32(Int32 value)
+        {
+            if (Remain < 4) ReuseCapacity();
+            if (Remain < 4) Resize(Length + 4);
+
+            _rawData[_writeIndex] = (byte)(value & 0xFF);
             _rawData[_writeIndex + 1] = (byte)((value >> 8) & 0xFF);
             _rawData[_writeIndex + 2] = (byte)((value >> 16) & 0xFF);
             _rawData[_writeIndex + 3] = (byte)((value >> 24) & 0xFF);
@@ -153,7 +166,7 @@ namespace Shared.Network
             if (byteBuffer.Remain < count) byteBuffer.Resize(byteBuffer.Length + count);
 
             Array.Copy(_rawData, _readIndex, byteBuffer.RawData, byteBuffer.WriteIndex, count);
-            _readIndex             += count;
+            _readIndex += count;
             byteBuffer._writeIndex += count;
             CheckAndReuseCapacity();
             return count;
@@ -190,19 +203,19 @@ namespace Shared.Network
             return readUInt16;
         }
 
-        // 讀取UInt32
         public bool TryReadBool(out bool value)
         {
             value = false;
             if (Length < 1) return false;
 
             value = _rawData[_readIndex] == 0b11111111;
-        
+
             _readIndex += 1;
             CheckAndReuseCapacity();
             return true;
         }
-    
+
+        // 讀取UInt32
         public uint ReadUInt32()
         {
             if (Length < 4) return 0;
@@ -215,11 +228,25 @@ namespace Shared.Network
             CheckAndReuseCapacity();
             return readUInt32;
         }
-    
+
+        // 讀取Int32
+        public int ReadInt32()
+        {
+            if (Length < 4) return 0;
+            // 以小端方式讀取Int32
+            int readInt32 = (int)((_rawData[_readIndex + 3] << 24) |
+                                  (_rawData[_readIndex + 2] << 16) |
+                                  (_rawData[_readIndex + 1] << 8) |
+                                  _rawData[_readIndex]);
+            _readIndex += 4;
+            CheckAndReuseCapacity();
+            return readInt32;
+        }
+
         public bool TryDecode<T>(out T outMessage) where T : IMessage, new()
         {
             try
-            { 
+            {
                 outMessage = new T();
                 outMessage.MergeFrom(RawData, ReadIndex, Length);
                 return true;

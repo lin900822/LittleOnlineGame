@@ -9,12 +9,16 @@ namespace Game
 {
     public class GamePlayApp : MonoBehaviour
     {
-        private List<ServiceBase> _services;
-
         private bool IsInitDone = false;
+
+        public GameObject BattleGO;
+
+        public static GamePlayApp Instance;
         
         private void Awake()
         {
+            Instance = this;
+            
             NetworkSystem.Instance.OnConnected += HandleNetworkConnected;
             
             UIManager.Instance.Init();
@@ -23,16 +27,8 @@ namespace Game
 
         private void HandleNetworkConnected()
         {
-            _services = new List<ServiceBase>();
-            _services.Add(new SystemService());
-            _services.Add(new PlayerService());
-            _services.Add(new BattleService());
-
-            foreach (var serviceBase in _services)
-            {
-                serviceBase.Init();
-            }
-
+            ServiceSystem.Instance.Init();
+            
             UIManager.Instance.PopUpWindow<Window_Init>();
             UIManager.Instance.PopUpWindow<Window_Login>();
 
@@ -46,11 +42,7 @@ namespace Game
             
             NetworkSystem.Instance.Update();
             UIManager.Instance.Update();
-            
-            foreach (var serviceBase in _services)
-            {
-                serviceBase.Update();
-            }
+            ServiceSystem.Instance.Update();
 
             if (Input.GetKeyDown(KeyCode.G))
             {
@@ -61,10 +53,15 @@ namespace Game
                 });
             }
             
-            if (Input.GetKeyDown(KeyCode.D))
+            if (Input.GetKeyDown(KeyCode.X))
             {
                 NetworkSystem.Instance.SendMessage((ushort)MessageId.Debug, ProtoUtils.Encode(new C2M_Debug()));
             }
+        }
+
+        public GameObject Find(string name)
+        {
+            return GameObject.Find(name);
         }
 
         private void OnApplicationQuit()
