@@ -90,6 +90,7 @@ namespace Game
         {
             _battleAgent.RegisterMessageHandler((ushort)MessageId.B2C_BattleStart, B2C_BattleStart);
             _battleAgent.RegisterMessageHandler((ushort)MessageId.B2C_SyncState, B2C_SyncState);
+            _battleAgent.RegisterMessageHandler((ushort)MessageId.B2C_BattleEnd, B2C_BattleEnd);
             
             var c2BJoinRoom = new C2B_JoinRoom()
             {
@@ -129,6 +130,29 @@ namespace Game
 
             _player1SnakeUnit.UpdatePos(player1X, player1Y);
             _player2SnakeUnit.UpdatePos(player2X, player2Y);
+        }
+        
+        private void B2C_BattleEnd(NetworkCommunicator communicator, ByteBuffer byteBuffer)
+        {
+            Object.Destroy(_player1SnakeUnit.gameObject);
+            Object.Destroy(_player2SnakeUnit.gameObject);
+            
+            _battleGO = GamePlayApp.Instance.BattleGO;
+            _battleGO.SetActive(false);
+
+            var result = (BattleEndResult)byteBuffer.ReadInt32();
+            var winnerPlayerId = byteBuffer.ReadUInt32();
+
+            _uIManager.HideAllWindows();
+            _uIManager.PopUpWindow<Window_Lobby>();
+
+            if (result == BattleEndResult.OtherDisconnected)
+            {
+                _uIManager.PopUpWindow<Window_SystemInfo>(new UIData_SystemInfo()
+                {
+                    Message = "對手中斷連線 遊戲結束"
+                });
+            }
         }
     }
 }

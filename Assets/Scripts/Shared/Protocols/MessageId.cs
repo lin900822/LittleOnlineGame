@@ -33,6 +33,7 @@
         // Battle To Client
         B2C_BattleStart = 21001,
         B2C_SyncState = 21002,
+        B2C_BattleEnd = 21003,
 
         ClientMax = 32767,
         
