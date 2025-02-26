@@ -27,6 +27,11 @@ namespace Game.MonoBehaviours
 
         public void UpdateStatus(int x, int y, int length)
         {
+            _lastPos = _targetPos;
+            _targetPos = new Vector2(x / 1000f, y / 1000f);
+
+            _startTime = Time.time; // 記錄開始時間
+            
             if (Body == null)
             {
                 Body = new List<Vector2>();
@@ -47,7 +52,7 @@ namespace Game.MonoBehaviours
                 {
                     Body.Add(Body[^1]);
                     _lastPoses.Add(Body[^1]);
-                    var obj = Instantiate(_snakeUnitBodyPrefab,_targetPos, Quaternion.identity, transform);
+                    var obj = Instantiate(_snakeUnitBodyPrefab,Body[^1], Quaternion.identity, transform);
                     _snakeUnitBodies.Add(obj);
                 }
             }
@@ -61,11 +66,6 @@ namespace Game.MonoBehaviours
             {
                 Body[i] = Body[i - 1];
             }
-            
-            _lastPos = _targetPos;
-            _targetPos = new Vector2(x / 1000f, y / 1000f);
-
-            _startTime = Time.time; // 記錄開始時間
             
             Body[0] = _targetPos;
         }

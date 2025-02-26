@@ -183,29 +183,46 @@ namespace Game
 
         private void B2C_BattleEnd(NetworkCommunicator communicator, ByteBuffer byteBuffer)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                Object.Destroy(_player1SnakeUnit.gameObject);
-                Object.Destroy(_player2SnakeUnit.gameObject);
-                Object.Destroy(_food.gameObject);
-            }
-
-            _battleGO = GamePlayApp.Instance.BattleGO;
-            _battleGO.SetActive(false);
-
             var result = (BattleEndResult)byteBuffer.ReadInt32();
             var winnerPlayerId = byteBuffer.ReadUInt32();
 
-            _uIManager.HideAllWindows();
-            _uIManager.PopUpWindow<Window_Lobby>();
-
+            string message;
+            
             if (result == BattleEndResult.OtherDisconnected)
             {
-                _uIManager.PopUpWindow<Window_SystemInfo>(new UIData_SystemInfo()
-                {
-                    Message = "對手中斷連線 遊戲結束"
-                });
+                message = "對手中斷連線 遊戲結束";
             }
+            else
+            {
+                if (winnerPlayerId == ServiceSystem.Instance.PlayerService.PlayerId)
+                {
+                    message = "你贏了";
+                }
+                else
+                {
+                    message = "你輸了";
+                }
+            }
+            
+            _uIManager.PopUpWindow<Window_SystemInfo>(new UIData_SystemInfo()
+            {
+                Message = message,
+                OnConfirm = () =>
+                {
+                    for (int i = 0; i < 5; i++)
+                    {
+                        Object.Destroy(_player1SnakeUnit.gameObject);
+                        Object.Destroy(_player2SnakeUnit.gameObject);
+                        Object.Destroy(_food.gameObject);
+                    }
+
+                    _battleGO = GamePlayApp.Instance.BattleGO;
+                    _battleGO.SetActive(false);
+            
+                    _uIManager.HideAllWindows();
+                    _uIManager.PopUpWindow<Window_Lobby>();
+                }
+            });
         }
     }
 }
