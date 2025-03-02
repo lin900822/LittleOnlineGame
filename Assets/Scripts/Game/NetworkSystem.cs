@@ -10,6 +10,9 @@ namespace Game
 {
     public class NetworkSystem
     {
+        public string IP { get; set; } = "127.0.0.1";
+        public int Port { get; set; } = 50001;
+        
         private NetworkAgent _networkAgent;
         
         private static NetworkSystem _instance;
@@ -38,7 +41,7 @@ namespace Game
         {
             _networkAgent = new NetworkAgent();
 
-            _networkAgent.Connect("127.0.0.1", 50001).Await(OnConnected);
+            _networkAgent.Connect(IP, Port).Await(OnConnected);
         }
 
         public void Update()

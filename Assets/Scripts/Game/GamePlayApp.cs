@@ -19,12 +19,17 @@ namespace Game
         
         private void Awake()
         {
+            #if UNITY_IOS
+            Application.targetFrameRate = 60;
+            #endif
+            
             Instance = this;
             
             NetworkSystem.Instance.OnConnected += HandleNetworkConnected;
             
             UIManager.Instance.Init();
-            NetworkSystem.Instance.Init();
+
+            UIManager.Instance.PopUpWindow<Window_Develop>();
         }
 
         private void HandleNetworkConnected()
