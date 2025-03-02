@@ -25,9 +25,6 @@ namespace Game
         private ByteBuffer _inputByteBuffer = new ByteBuffer();
 
         private bool _isBattleStart;
-        
-        private Vector2 startPos;
-        private bool isDragging = false;
 
         public override void Init()
         {
@@ -47,58 +44,32 @@ namespace Game
             if (!_isBattleStart)
                 return;
 
-            _inputByteBuffer.SetReadIndex(0);
-            _inputByteBuffer.SetWriteIndex(0);
 
             if (Input.GetKey(KeyCode.W))
             {
-                _inputByteBuffer.WriteInt32(90);
-                _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
+                SetInput(90);
             }
             else if (Input.GetKey(KeyCode.S))
             {
-                _inputByteBuffer.WriteInt32(270);
-                _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
+                SetInput(270);
             }
             else if (Input.GetKey(KeyCode.A))
             {
-                _inputByteBuffer.WriteInt32(180);
-                _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
+                SetInput(180);
             }
             else if (Input.GetKey(KeyCode.D))
             {
-                _inputByteBuffer.WriteInt32(0);
-                _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
-            }
-            
-            // 按下滑鼠左鍵
-            if (Input.GetMouseButtonDown(0))
-            {
-                startPos = Input.mousePosition;
-                isDragging = true;
-            }
-
-            // 拖曳過程中計算角度
-            if (isDragging && Input.GetMouseButton(0))
-            {
-                Vector2 currentPos = Input.mousePosition;
-                int angle = (int)CalculateAngle(startPos, currentPos);
-                _inputByteBuffer.WriteInt32(angle);
-                _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
-                Debug.Log($"當前角度: {angle:F2}°");
-            }
-
-            // 放開滑鼠左鍵
-            if (Input.GetMouseButtonUp(0))
-            {
-                isDragging = false;
+                SetInput(0);
             }
         }
-        
-        private float CalculateAngle(Vector2 start, Vector2 end)
+
+        public void SetInput(float angle)
         {
-            Vector2 direction = end - start;
-            return Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            _inputByteBuffer.SetReadIndex(0);
+            _inputByteBuffer.SetWriteIndex(0);
+
+            _inputByteBuffer.WriteInt32((int)angle);
+            _battleAgent.SendMessage((ushort)MessageId.C2B_Input, _inputByteBuffer);
         }
 
         private void M2C_RoomMatched(NetworkCommunicator communicator, ByteBuffer byteBuffer)
@@ -144,6 +115,7 @@ namespace Game
             _isBattleStart = true;
 
             _uIManager.HideAllWindows();
+            _uIManager.PopUpWindow<Window_GamePlay>();
 
             _battleGO = GamePlayApp.Instance.BattleGO;
             _battleGO.SetActive(true);
@@ -187,7 +159,7 @@ namespace Game
             var winnerPlayerId = byteBuffer.ReadUInt32();
 
             string message;
-            
+
             if (result == BattleEndResult.OtherDisconnected)
             {
                 message = "對手中斷連線 遊戲結束";
@@ -203,7 +175,7 @@ namespace Game
                     message = "你輸了";
                 }
             }
-            
+
             _uIManager.PopUpWindow<Window_SystemInfo>(new UIData_SystemInfo()
             {
                 Message = message,
@@ -218,7 +190,7 @@ namespace Game
 
                     _battleGO = GamePlayApp.Instance.BattleGO;
                     _battleGO.SetActive(false);
-            
+
                     _uIManager.HideAllWindows();
                     _uIManager.PopUpWindow<Window_Lobby>();
                 }

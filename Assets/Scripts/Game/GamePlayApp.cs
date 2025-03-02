@@ -12,6 +12,8 @@ namespace Game
         private bool IsInitDone = false;
 
         public GameObject BattleGO;
+        public Camera UICamera;
+        public RectTransform UICanvas;
 
         public static GamePlayApp Instance;
         

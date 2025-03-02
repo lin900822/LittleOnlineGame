@@ -5,6 +5,7 @@ namespace Game
     public class ServiceSystem
     {
         public PlayerService PlayerService { get; private set; }
+        public BattleService BattleService { get; private set; }
         
         private List<ServiceBase> _services;
         
@@ -31,8 +32,9 @@ namespace Game
             
             PlayerService = new PlayerService();
             _services.Add(PlayerService);
-            
-            _services.Add(new BattleService());
+
+            BattleService = new BattleService();
+            _services.Add(BattleService);
         }
 
         public void Init()
